@@ -1,0 +1,12 @@
+# Archivos generados por Maven
+target/
+# Archivos subidos por los usuarios (adjuntos y fotos)
+uploads/
+# Configuración de los IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+nbproject/

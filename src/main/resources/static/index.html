@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de Gestión y Seguimiento de Denuncias PNP y Fiscalía">
+  <title>Prototipo IHC (fines didácticos) · Sistema de gestión de denuncias</title>
+  <!-- Hoja de estilos (src/main/resources/static/css/styles.css) -->
+  <link rel="stylesheet" href="css/styles.css?v=7">
+</head>
+<body>
+<div role="note" style="background:#FFF4CC;color:#5c4400;border-bottom:1px solid #e0c96b;font:600 13px/1.4 system-ui,Segoe UI,Arial,sans-serif;text-align:center;padding:6px 12px">Prototipo académico IHC con fines didácticos (sistema de gestión de denuncias). No es un sitio oficial de la PNP ni del Ministerio Público; los datos son ficticios.</div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- ACCESO COMPARTIDO: el funcionario selecciona su institución y usa sus propias credenciales -->
+  <main id="authView" class="auth-shell">
+    <section class="auth-brand">
+      <div class="brand-mark">⚖</div>
+      <div>
+        <p class="eyebrow">PLATAFORMA INSTITUCIONAL</p>
+        <h1>Sistema de Gestión<br>y Seguimiento de Denuncias</h1>
+        <p class="brand-subtitle">Policía Nacional del Perú <span>·</span> Ministerio Público - Fiscalía</p>
+      </div>
+      <div class="brand-footer">Acceso seguro para personal autorizado</div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="institution-logos">
+          <!-- Insignias de las dos instituciones. Las imágenes están dentro del HTML (formato base64),
+               así no dependen de ningún archivo aparte. Su tamaño se cambia con el atributo height (en píxeles).
+               El menú lateral del policía y del fiscal reutiliza estas mismas imágenes. -->
+          <div class="institution"><img class="institution-logo" data-logo="pnp" height="42" alt="Insignia de la Policía Nacional del Perú" src="data:image/png;base64,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"><b>PNP</b></div>
+          <span class="logo-divider"></span>
+          <div class="institution"><img class="institution-logo" data-logo="mp" height="42" alt="Insignia del Ministerio Público" src="data:image/png;base64,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"><b>Fiscalía</b></div>
+        </div>
+
+        <section id="loginScreen" class="auth-screen">
+          <span class="step-label">ACCESO DE FUNCIONARIO</span>
+          <h2>Bienvenido al sistema</h2>
+          <p class="muted">Selecciona tu perfil e ingresa tus credenciales institucionales.</p>
+          <form id="loginForm">
+            <label for="role">Perfil institucional</label>
+            <select id="role" required>
+              <option value="policia">Funcionario policial — PNP</option>
+              <option value="fiscal">Funcionario fiscal — Fiscalía</option>
+              <option value="admin">Administrador del sistema</option>
+            </select>
+            <label for="institutionCode">Código institucional</label>
+            <div class="input-wrap"><span class="auth-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0"/></svg></span><input id="institutionCode" autocomplete="username" placeholder="Ej. FN-1023 o PNP-2045" required></div>
+            <label for="password">Contraseña</label>
+            <div class="input-wrap"><span class="auth-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5v-5a2.5 2.5 0 0 1 2-2.45V4a4 4 0 0 1 4-4m0 1a3 3 0 0 0-3 3v2h6V4a3 3 0 0 0-3-3"/></svg></span><input id="password" type="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" required><button class="toggle-password" type="button" data-toggle="password" aria-label="Mostrar contraseña"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8"/><circle cx="8" cy="8" r="2.5"/></svg></button></div>
+            <button class="primary-btn full" type="submit">Iniciar sesión <span>→</span></button>
+          </form>
+          <button class="text-btn" type="button" data-screen="recoverScreen">¿Olvidaste tu contraseña?</button>
+          <div class="demo-note"><b>Acceso:</b> ingresa con el código institucional y la contraseña registrados en la base de datos. El perfil elegido debe coincidir con el de tu cuenta.</div>
+        </section>
+
+        <section id="recoverScreen" class="auth-screen hidden">
+          <span class="step-label">RECUPERACIÓN DE ACCESO</span>
+          <h2>Recuperar contraseña</h2>
+          <p class="muted">Indica tu perfil, código institucional y DNI para verificar tu identidad.</p>
+          <form id="recoverForm">
+            <label for="recoverRole">Perfil institucional</label>
+            <select id="recoverRole"><option value="policia">Funcionario policial — PNP</option><option value="fiscal">Funcionario fiscal — Fiscalía</option><option value="admin">Administrador del sistema</option></select>
+            <label for="recoverCode">Código institucional</label>
+            <div class="input-wrap"><span>♙</span><input id="recoverCode" placeholder="Tu código institucional" required></div>
+            <label for="recoverDni">DNI</label>
+            <div class="input-wrap"><span>▣</span><input id="recoverDni" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" placeholder="8 dígitos" required></div>
+            <button class="primary-btn full" type="submit">Verificar identidad</button>
+          </form>
+          <button class="text-btn" type="button" data-screen="loginScreen">← Volver al inicio</button>
+        </section>
+
+        <section id="changeScreen" class="auth-screen hidden">
+          <span class="step-label">SEGURIDAD DE LA CUENTA</span>
+          <h2>Cambiar contraseña</h2>
+          <p class="muted">Crea una nueva contraseña para tu cuenta institucional.</p>
+          <form id="changeForm">
+            <label for="newPassword">Nueva contraseña</label>
+            <div class="input-wrap"><span>▣</span><input id="newPassword" type="password" minlength="8" maxlength="60" required placeholder="Mínimo 8 caracteres"><button class="toggle-password" type="button" data-toggle="newPassword">◉</button></div>
+            <label for="confirmPassword">Confirmar contraseña</label>
+            <div class="input-wrap"><span>▣</span><input id="confirmPassword" type="password" minlength="8" maxlength="60" required placeholder="Repite la contraseña"><button class="toggle-password" type="button" data-toggle="confirmPassword">◉</button></div>
+            <button class="primary-btn full" type="submit">Actualizar contraseña</button>
+          </form>
+          <button class="text-btn" type="button" data-screen="loginScreen">Volver al inicio</button>
+        </section>
+
+        <section id="successScreen" class="auth-screen success-screen hidden">
+          <div class="success-icon">✓</div><h2>Contraseña actualizada</h2>
+          <p class="muted">Tu contraseña se cambió correctamente.</p>
+          <button class="primary-btn full" type="button" data-screen="loginScreen">Ir al inicio de sesión</button>
+        </section>
+      </div>
+      <p class="auth-legal">Uso exclusivo de funcionarios autorizados · Prototipo académico</p>
+    </section>
+  </main>
+
+  <!-- APLICACIÓN: ambos perfiles comparten estructura, pero tienen módulos y permisos diferenciados -->
+  <div id="appView" class="app-layout hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="mini-mark" id="sidebarLogo">⚖</div><div><b id="sidebarInstitution">PNP</b><small>Gestión de denuncias</small></div></div>
+      <div class="profile-chip"><div class="avatar" id="avatar">FP</div><div><b id="sidebarName">Funcionario</b><small id="sidebarRole">Policía</small></div></div>
+      <nav id="mainNav" class="main-nav" aria-label="Navegación principal"></nav>
+      <button id="logoutBtn" class="logout-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"/><path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/></svg><span>Cerrar sesión</span></button>
+    </aside>
+
+    <main class="workspace">
+      <!-- Barra de accesibilidad: aparece en los tres perfiles (mismo estilo que el portal ciudadano) -->
+      <div class="access-bar" aria-label="Opciones de accesibilidad">
+        <button class="access-btn" id="colorMode" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.7-.7 1.7-1.5 0-.4-.2-.8-.4-1.2-.3-.5-.6-1-.6-1.6 0-1.1.9-2 2-2H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3Z"/><circle cx="7.5" cy="10.5" r=".7" fill="currentColor"/><circle cx="10" cy="7" r=".7" fill="currentColor"/><circle cx="14" cy="7" r=".7" fill="currentColor"/><circle cx="17" cy="10" r=".7" fill="currentColor"/></svg><b>Color</b></button>
+        <button class="access-btn" id="voiceReader" type="button" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><b id="voiceReaderLabel">Escuchar</b></button>
+        <button class="access-btn" id="textSmaller" type="button" aria-label="Reducir el tamaño del contenido">A−</button>
+        <button class="access-btn" id="textLarger" type="button" aria-label="Aumentar el tamaño del contenido">A+</button>
+        <button class="access-btn" id="helpBtn" type="button" data-page="help">Ayuda</button>
+      </div>
+      <header class="topbar">
+        <div><span class="breadcrumb">Sistema / <b id="breadcrumbCurrent">Inicio</b></span><h1 id="pageTitle">Panel principal</h1></div>
+        <div class="topbar-right"><span class="secure-tag">● Sesión segura</span><div class="notification-wrap"><button class="notification-btn" id="notificationBtn" type="button" aria-label="Ver deberes pendientes" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="notification-badge" id="notificationCount">3</span></button><div id="notificationPanel" class="notification-panel hidden"><header class="notification-header"><h3>Deberes pendientes</h3><p class="muted">Actividades que requieren tu atención</p></header><div id="dutyList" class="duty-list"></div><footer class="notification-footer">Las tareas se actualizan según el estado de las denuncias</footer></div></div><div class="user-menu-wrap"><button class="user-menu" id="userMenu" type="button" aria-haspopup="menu" aria-expanded="false"><span class="avatar small" id="topAvatar">FP</span><span><b id="topCode">PNP-2045</b><small id="topRole">Funcionario policial</small></span><svg class="menu-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button><div id="sessionMenu" class="session-menu hidden" role="menu"><button type="button" data-page="profile" role="menuitem"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-4 3-6 7-6s6.3 2 7 6"/></svg>Editar mi perfil</button><button type="button" data-page="settings" role="menuitem"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg>Configuración</button><button type="button" id="menuLogout" role="menuitem"><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10"/></svg>Cerrar sesión</button></div></div></div>
+      </header>
+
+      <!-- Ayuda y glosario: se abre con el botón "Ayuda" de la barra de accesibilidad -->
+      <section id="helpPage" class="page hidden">
+        <div class="welcome-row"><div><p class="eyebrow">ORIENTACIÓN</p><h2>Ayuda y glosario</h2><p class="muted">Busca qué significa cada término y para qué sirve cada botón del sistema.</p></div></div>
+        <div class="glossary-search"><label for="glossarySearch" class="hidden">Buscar en el glosario</label><input id="glossarySearch" class="form-control" type="search" placeholder="Buscar, por ejemplo: carpeta fiscal" autocomplete="off"><button class="primary-btn" id="searchGlossary" type="button">Buscar</button></div>
+        <div class="glossary" id="glossary">
+            <h2 class="glossary-heading">Conceptos del sistema</h2>
+            <article data-term="expediente codigo caso"><h3>Denuncia</h3><p>Registro de un hecho que una persona pone en conocimiento de la Policía. Cada denuncia tiene un código único, por ejemplo D-000584.</p></article>
+            <article data-term="fiscalia expediente numero"><h3>Carpeta fiscal</h3><p>Expediente que abre la Fiscalía para investigar una denuncia. Se identifica con un número como CF-2026-00125.</p></article>
+            <article data-term="fiscalia oficina"><h3>Despacho fiscal</h3><p>Oficina de la Fiscalía que tiene a su cargo la investigación de la denuncia.</p></article>
+            <article data-term="fiscalia encargado"><h3>Fiscal responsable</h3><p>Fiscal que dirige la investigación y decide las diligencias a realizar.</p></article>
+            <article data-term="policia asignado encargado"><h3>Funcionario responsable</h3><p>Funcionario policial asignado a la denuncia. Es quien conversa con el ciudadano por el chat.</p></article>
+            <article data-term="tramite accion policial fiscal"><h3>Actuación</h3><p>Trámite o acción que se realiza y se registra en el expediente, como una entrevista o una inspección.</p></article>
+            <article data-term="investigacion citacion audiencia calendario" data-roles="fiscal"><h3>Diligencia</h3><p>Actividad programada para investigar los hechos: declaraciones, inspecciones, audiencias o pericias.</p></article>
+            <article data-term="decision resolucion archivo" data-roles="fiscal"><h3>Disposición fiscal</h3><p>Documento donde el fiscal comunica una decisión, por ejemplo iniciar diligencias o archivar el caso.</p></article>
+            <article data-term="remision informe policial enviar" data-roles="policia"><h3>Informe a Fiscalía</h3><p>Informe policial con lo actuado que la PNP remite a la Fiscalía.</p></article>
+            <article data-term="remision requerimiento respuesta" data-roles="policia"><h3>Seguimiento de Fiscalía</h3><p>Control de los informes remitidos: si la Fiscalía ya los recibió, respondió o pidió algo más (requerimiento).</p></article>
+            <article data-term="linea de tiempo cambios observaciones"><h3>Historial de seguimiento</h3><p>Lista de los cambios de estado y observaciones de una denuncia, con fecha, hora y funcionario. El ciudadano también lo ve en su portal.</p></article>
+            <h2 class="glossary-heading">Estados de una denuncia</h2>
+            <article data-term="estado tramite policial"><h3>En proceso</h3><p>La denuncia está siendo atendida por la PNP. Todavía no hay una decisión final.</p></article>
+            <article data-term="estado pendiente policial"><h3>Por resolver</h3><p>Las principales diligencias policiales ya se realizaron y falta una decisión.</p></article>
+            <article data-term="estado cerrado terminado policial"><h3>Resuelto</h3><p>La atención policial de la denuncia ha concluido.</p></article>
+            <article data-term="estado fiscal"><h3>En investigación</h3><p>La Fiscalía está reuniendo información sobre los hechos denunciados.</p></article>
+            <article data-term="estado fiscal"><h3>Diligencias</h3><p>La Fiscalía está realizando las diligencias de la investigación.</p></article>
+            <article data-term="estado fiscal decision"><h3>Con disposición</h3><p>La Fiscalía ya emitió una disposición sobre la denuncia.</p></article>
+            <article data-term="estado fiscal cerrado"><h3>Archivado</h3><p>La Fiscalía dispuso el archivo de la denuncia.</p></article>
+            <h2 class="glossary-heading">Botones e iconos</h2>
+            <article data-term="ver vista rapida consultar boton"><h3>Icono del ojo</h3><p>Abre una vista rápida de la denuncia. Es solo de lectura: no permite hacer cambios.</p></article>
+            <article data-term="editar actualizar modificar boton"><h3>Icono del lápiz</h3><p>Abre el detalle de la denuncia para cambiar su estado y agregar una observación. El administrador no lo tiene porque solo consulta.</p></article>
+            <article data-term="notificaciones tareas pendientes boton"><h3>Campana (deberes pendientes)</h3><p>Muestra las denuncias que aún requieren atención. El número rojo indica cuántas hay.</p></article>
+            <article data-term="boton guardar estado observacion"><h3>Guardar cambios / Registrar disposición</h3><p>Guarda el nuevo estado y la observación de la denuncia. El cambio queda en el historial y el ciudadano puede verlo.</p></article>
+            <article data-term="reportes fechas exportar imprimir boton"><h3>Consultar reporte</h3><p>Busca las denuncias registradas entre dos fechas. El resultado se puede exportar a PDF, a Excel o imprimir.</p></article>
+            <article data-term="mensajes adjuntar audio conversacion"><h3>Chat</h3><p>Mensajes con ciudadanos, con la otra institución o con soporte. Permite adjuntar fotos, documentos y audios. Se actualiza solo cada pocos segundos.</p></article>
+            <article data-term="perfil configuracion tuerca cerrar sesion salir"><h3>Menú de usuario</h3><p>Arriba a la derecha, sobre tu código. Desde ahí puedes editar tu perfil, abrir la configuración y cerrar sesión.</p></article>
+            <article data-term="seguridad sesion tiempo"><h3>Sesión segura</h3><p>Indica que ingresaste con tu código y contraseña. La sesión se cierra sola tras 30 minutos sin actividad.</p></article>
+            <h2 class="glossary-heading">Accesibilidad</h2>
+            <article data-term="daltonismo contraste colores boton"><h3>Color</h3><p>Cambia los colores de la pantalla: vista normal, paleta apta para daltonismo y alto contraste. El sistema recuerda tu elección.</p></article>
+            <article data-term="voz lectura audio boton"><h3>Escuchar</h3><p>Lee en voz alta el contenido de la pantalla actual. Vuelve a presionarlo para detener la lectura.</p></article>
+            <article data-term="tamano letra texto zoom ampliar reducir boton"><h3>A− y A+</h3><p>Reducen o amplían el tamaño del contenido, entre el 80 % y el 150 %.</p></article>
+            <article data-term="glosario boton"><h3>Ayuda</h3><p>Abre esta página de ayuda y glosario desde cualquier pantalla.</p></article>
+            <h2 class="glossary-heading">Administración</h2>
+            <article data-term="crear cuenta usuario nuevo" data-roles="admin"><h3>Registrar funcionario</h3><p>Crea la cuenta de un funcionario policial o fiscal con su código institucional y una contraseña temporal.</p></article>
+            <article data-term="bloquear activar cuenta estado" data-roles="admin"><h3>Habilitar / Deshabilitar</h3><p>Activa o bloquea la cuenta de un funcionario. Una cuenta deshabilitada no puede iniciar sesión.</p></article>
+            <article data-term="modulos accesos perfil" data-roles="admin"><h3>Permisos</h3><p>Módulos que puede usar cada funcionario. Si se desmarca un módulo, desaparece de su menú.</p></article>
+            <article data-term="auditoria historial operaciones" data-roles="admin"><h3>Registros de actividades</h3><p>Lista de las operaciones realizadas en el sistema: quién hizo qué y cuándo.</p></article>
+            <article data-term="respaldo backup" data-roles="admin"><h3>Copias de seguridad</h3><p>Historial de respaldos de la información. En este prototipo la copia es simulada.</p></article>
+        </div>
+        <p id="noTerms" class="empty-report hidden">No encontramos términos con esa búsqueda.</p>
+      </section>
+
+      <section id="dashboardPage" class="page">
+        <div class="welcome-row"><div><p class="eyebrow">RESUMEN GENERAL</p><h2 id="welcomeTitle">Bienvenido, Funcionario</h2><p class="muted" id="welcomeSubtitle">Este es el resumen de tus denuncias asignadas.</p></div><span class="date-pill" id="todayDate"></span></div>
+        <div id="statCards" class="stats-grid"></div>
+        <div id="roleDashboardExtras" class="role-dashboard-extras"></div>
+        <div class="content-grid">
+          <section class="panel table-panel"><div class="panel-heading"><div><h3 id="recentTitle">Denuncias recientes</h3><p class="muted">Actividad bajo tu competencia</p></div><button class="outline-btn" data-page="denuncias">Ver todas →</button></div><div class="table-scroll"><table><thead><tr><th>N.º denuncia</th><th>Ciudadano</th><th>Delito</th><th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody id="recentRows"></tbody></table></div></section>
+          <section class="panel quick-panel"><div class="panel-heading"><div><h3>Accesos rápidos</h3><p class="muted">Tareas frecuentes</p></div></div><div id="quickActions" class="quick-actions"></div></section>
+        </div>
+      </section>
+
+
+      <section id="registerFunctionPage" class="page hidden">
+        <div class="welcome-row"><div><p class="eyebrow">ADMINISTRACIÓN DE CUENTAS</p><h2>Registrar funcionario</h2><p class="muted">Completa los datos institucionales para crear un perfil policial o fiscal.</p></div><span class="date-pill">Formulario de registro</span></div>
+        <section class="panel registration-panel">
+          <form id="registerFunctionForm">
+            <div class="form-section-title">Datos personales</div>
+            <div class="registration-grid">
+              <label>Tipo de funcionario<select id="newFunctionRole" required><option value="">Seleccionar perfil</option><option value="policia">Funcionario policial</option><option value="fiscal">Funcionario fiscal</option></select></label>
+              <label>Nombres<input id="newFunctionNames" required maxlength="80" placeholder="Nombres del funcionario"></label>
+              <label>Apellidos<input id="newFunctionLastnames" required maxlength="80" placeholder="Apellidos del funcionario"></label>
+              <label>DNI<input id="newFunctionDni" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" placeholder="8 dígitos"></label>
+              <label>Fecha de nacimiento<input id="newFunctionBirth" type="date" required></label>
+              <label>Teléfono<input id="newFunctionPhone" required inputmode="numeric" pattern="[0-9]{9}" maxlength="9" placeholder="9 dígitos"></label>
+              <label>Correo institucional<input id="newFunctionEmail" type="email" required placeholder="usuario@institucion.gob.pe"></label>
+              <label>Institución<select id="newFunctionInstitution" required><option value="">Seleccionar institución</option><option value="PNP">Policía Nacional del Perú</option><option value="Fiscalía">Ministerio Público - Fiscalía</option></select></label>
+              <label class="wide-field">Dependencia / despacho<input id="newFunctionOffice" required maxlength="120" placeholder="Comisaría, unidad policial o despacho fiscal"></label>
+            </div>
+            <div class="form-section-title">Credenciales de acceso</div>
+            <div class="registration-grid">
+              <label>Código institucional<input id="newFunctionCode" required maxlength="20" placeholder="Ej. PNP-2100 o FN-1050"></label>
+              <label>Contraseña temporal<input id="newFunctionPassword" type="password" required minlength="8" maxlength="60" placeholder="Mínimo 8 caracteres"></label>
+              <label>Confirmar contraseña<input id="newFunctionPasswordConfirm" type="password" required minlength="8" maxlength="60" placeholder="Repite la contraseña"></label>
+              <label>Estado de la cuenta<select id="newFunctionStatus" required><option value="true">Activo</option><option value="false">Deshabilitado</option></select></label>
+            </div>
+            <div class="registration-actions"><p class="muted">La cuenta se crea en la base de datos con la contraseña cifrada. El funcionario podrá ingresar con su código y la contraseña temporal.</p><button class="primary-btn" type="submit">Registrar funcionario</button></div>
+            <p id="registerFunctionFeedback" class="form-feedback" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </section>
+      <section id="denunciasPage" class="page hidden">
+        <section class="panel"><div class="panel-heading"><div><h2 id="denunciasTitle">Denuncias asignadas</h2><p class="muted" id="denunciasDescription">Consulta y administra los expedientes de tu competencia.</p></div><span class="count-pill" id="caseCount">0 registros</span></div>
+          <div class="toolbar"><div class="search-box"><span>⌕</span><input id="searchInput" placeholder="Buscar por número, ciudadano o delito..."></div><select id="statusFilter"><option value="">Todos los estados</option><option>En proceso</option><option>En investigación</option><option>Diligencias</option><option>Por resolver</option><option>Con disposición</option><option>Archivado</option><option>Resuelto</option></select></div>
+          <div class="table-scroll"><table><thead><tr><th>N.º denuncia</th><th>Ciudadano</th><th>Delito</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody id="caseRows"></tbody></table></div>
+        </section>
+      </section>
+
+      <section id="detailPage" class="page hidden">
+        <button class="back-btn" data-page="denuncias">← Volver a denuncias</button>
+        <div id="detailContent"></div>
+      </section>
+
+      <section id="reportsPage" class="page hidden">
+        <div class="welcome-row"><div><p class="eyebrow">ANÁLISIS OPERATIVO</p><h2>Reportes</h2><p class="muted">Resumen del desempeño y distribución de denuncias asignadas.</p></div><span class="date-pill">Datos de la base de datos</span></div>
+        <!-- Tablero de estadísticas: solo lo ve el administrador (lo dibuja app.js con datos del backend) -->
+        <div id="adminDashboard" class="hidden"></div>
+        <div class="report-section-title" id="reportChartsTitle">Análisis operativos</div>
+        <div class="report-chart-grid" id="reportChartsGrid">
+          <section class="panel report-chart-card">
+            <div class="panel-heading"><div><h3>Denuncias atendidas</h3><p class="muted">Últimos 7 meses</p></div><span class="trend-badge hidden" id="reportTrend"></span></div>
+            <div class="monthly-chart" id="reportMonthlyChart" aria-label="Gráfico de denuncias atendidas por mes"></div>
+          </section>
+          <section class="panel report-chart-card">
+            <div class="panel-heading"><div><h3>Distribución por estado</h3><p class="muted">Total de casos asignados</p></div></div>
+            <div class="status-chart-layout"><div class="donut-chart" id="reportDonut"><div class="donut-center"><strong id="reportDonutTotal">0</strong><span>Total</span></div></div><div class="donut-legend" id="reportDonutLegend"></div></div>
+          </section>
+        </div>
+        <!-- Policía: informes remitidos a la Fiscalía y su respuesta (lo dibuja modulos.js) -->
+        <div id="informesFiscalia" class="hidden"></div>
+        <div class="report-section-title">Reportes</div>
+        <section class="panel">
+          <div class="panel-heading"><div><h2>Consulta de denuncias</h2><p class="muted">Combina los filtros que necesites. Si no eliges ninguno se muestran todas las denuncias.</p></div></div>
+          <form id="reportFilterForm">
+            <div class="report-filter-grid rep-grid">
+              <div class="form-field"><label for="repDelito">Tipo de denuncia o delito</label><select id="repDelito"></select></div>
+              <div class="form-field"><label for="repEstadoPnp">Estado en la PNP</label><select id="repEstadoPnp"></select></div>
+              <div class="form-field"><label for="repEstadoFiscal">Estado en la Fiscalía</label><select id="repEstadoFiscal"></select></div>
+              <div class="form-field"><label for="repProvincia">Provincia</label><select id="repProvincia"></select></div>
+              <div class="form-field"><label for="repDistrito">Distrito</label><select id="repDistrito"></select></div>
+              <div class="form-field"><label for="repTexto">Buscar</label><input id="repTexto" type="search" maxlength="80" placeholder="Código, ciudadano, DNI o carpeta"></div>
+              <div class="form-field"><label for="repDesde">Fecha desde</label><input id="repDesde" type="date"></div>
+              <div class="form-field"><label for="repHasta">Fecha hasta</label><input id="repHasta" type="date"></div>
+            </div>
+            <div class="report-filter-actions"><button class="secondary-btn" type="reset">Limpiar filtros</button><button class="primary-btn" type="submit">Consultar</button></div>
+          </form>
+        </section>
+        <section class="panel hidden" id="reportResultsPanel">
+          <div class="panel-heading"><div><h2>Resultados de la consulta</h2><p class="muted" id="reportResultSubtitle"></p></div>
+            <div class="report-export-actions">
+              <button class="outline-btn icon-btn" type="button" id="printReport" title="Imprimir el reporte"><!-- icono imprimir -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg><span>Imprimir</span></button>
+              <button class="outline-btn icon-btn" type="button" id="exportReportExcel" title="Exportar a Excel (.xlsx)"><!-- icono Excel -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM2.575 15.202H.785v-1.073H2.47v-.606H.785v-1.025h1.79v-.648H0v3.999h2.575zM6.31 11.85h-.893l-.823 1.439h-.036l-.832-1.439h-.931l1.227 1.983-1.239 2.016h.861l.853-1.415h.035l.85 1.415h.908l-1.254-1.992zm1.025 3.352h1.79v.647H6.548V11.85h2.576v.648h-1.79v1.025h1.684v.606H7.334v1.073Z"/></svg><span>Excel</span></button>
+              <button class="outline-btn icon-btn" type="button" id="exportReportPdf" title="Exportar a PDF"><!-- icono PDF -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.158-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.732-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 .998-.237a1.45 1.45 0 0 0 .595-.689q.196-.45.196-1.084 0-.63-.196-1.075a1.43 1.43 0 0 0-.589-.68q-.396-.234-1.005-.234zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.753a2.3 2.3 0 0 1-.068.592 1.1 1.1 0 0 1-.196.422.8.8 0 0 1-.334.252 1.3 1.3 0 0 1-.483.082h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/></svg><span>PDF</span></button>
+            </div>
+          </div>
+          <p class="report-result-meta" id="reportResultCount"></p>
+          <div id="reportResultRows"></div>
+        </section>
+      </section>
+      <section id="trackingPage" class="page hidden"></section>
+      <section id="documentsPage" class="page hidden"></section>
+      <section id="fiscalTrackingPage" class="page hidden"></section>
+      <section id="schedulePage" class="page hidden"></section>
+      <section id="diligencesPage" class="page hidden"></section>
+      <section id="provisionsPage" class="page hidden"></section>
+      <section id="functionsPage" class="page hidden"></section>
+      <section id="rolesPage" class="page hidden"></section>
+      <section id="activityPage" class="page hidden"></section>
+      <section id="backupPage" class="page hidden"></section>
+
+      <section id="usersPage" class="page hidden">
+        <section class="panel">
+          <div class="panel-heading"><div><h2>Usuarios institucionales</h2><p class="muted">Administración de cuentas, perfiles y permisos de acceso.</p></div></div>
+          <div id="userAdminTools" class="admin-tools hidden"><div><b>Administración de perfiles</b><p class="muted">Habilita o deshabilita las cuentas con el botón de acciones; los cambios se guardan en la base de datos.</p></div><span class="admin-label">CONTROL ADMINISTRATIVO</span></div>
+          <div class="table-scroll"><table><thead><tr><th>Código</th><th>Funcionario</th><th>Institución</th><th>Perfil</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="userRows"></tbody></table></div>
+        </section>
+        <section class="panel" id="permissionEditorPanel">
+          <div class="panel-heading"><div><h2>Asignación de permisos por funcionario</h2><p class="muted">Selecciona un perfil institucional y habilita los módulos que podrá utilizar.</p></div></div>
+          <div class="permission-editor">
+            <label class="field-label" for="permissionUser">Funcionario o perfil</label>
+            <select id="permissionUser" class="form-control"></select>
+            <div class="permission-check-grid" id="permissionCheckGrid">
+              <label><input type="checkbox" value="denuncias" checked> Denuncias / carpetas fiscales</label>
+              <label><input type="checkbox" value="tracking" checked> Actuaciones</label>
+              <label><input type="checkbox" value="documents" checked> Documentos y evidencias</label>
+              <label><input type="checkbox" value="reports"> Reportes e informes</label>
+              <label><input type="checkbox" value="chat"> Chat institucional</label>
+              <label><input type="checkbox" value="schedule"> Programación / diligencias</label>
+            </div>
+            <div class="permission-editor-actions"><button type="button" class="primary-btn" id="saveUserPermissions">Guardar permisos</button><span class="muted" id="permissionFeedback">Los cambios se guardan en la base de datos.</span></div>
+          </div>
+        </section>
+        <section class="panel admin-permissions hidden" id="adminPermissions"><div class="panel-heading"><div><h2>Permisos del administrador</h2><p class="muted">Acceso integral a los módulos de la plataforma.</p></div></div><div class="permission-grid"><span>✓ Gestión de denuncias</span><span>✓ Seguimiento y reportes</span><span>✓ Usuarios y perfiles</span><span>✓ Chat ciudadano</span><span>✓ Configuración del sistema</span><span>✓ Administración de accesos</span></div></section>
+      </section>
+
+      <section id="settingsPage" class="page hidden">
+        <section class="panel settings-panel"><h2>Configuración de cuenta</h2><p class="muted">Preferencias de la sesión actual.</p><div class="setting-row"><div><b>Perfil activo</b><small id="settingsRole">Funcionario policial — PNP</small></div><span class="count-pill">Institucional</span></div><div class="setting-row"><div><b>Código de funcionario</b><small id="settingsCode">PNP-2045</small></div><span class="secure-tag">● Verificado</span></div><button class="primary-btn" id="changeFromSettings">Cambiar contraseña</button></section>
+      </section>
+
+      <section id="profilePage" class="page hidden">
+        <div class="profile-layout">
+          <aside class="panel profile-summary">
+            <div class="profile-photo" id="profilePhoto"><span id="profileInitials">FP</span></div>
+            <h2 id="profileDisplayName">Carlos Mendoza Ruiz</h2>
+            <div class="rank" id="profileRankSummary">Suboficial de Primera · PNP</div>
+            <label class="photo-upload">Cambiar foto<input id="photoInput" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <div class="profile-note">La fotografía debe ser reciente, tener fondo neutro y pesar menos de 5 MB.</div>
+          </aside>
+          <section class="panel profile-form">
+            <h2>Información del funcionario</h2>
+            <p class="muted">Consulta tus datos institucionales y mantén actualizada tu información de contacto.</p>
+            <form id="profileForm">
+              <div class="form-section-title">Datos institucionales</div>
+              <div class="profile-fields">
+                <div class="form-field"><label for="profileName">Nombres y apellidos</label><input id="profileName" readonly><div class="field-help">Dato administrado por la institución.</div></div>
+                <div class="form-field"><label for="profileDni">Documento de identidad</label><input id="profileDni" readonly><div class="field-help">Dato no editable.</div></div>
+                <div class="form-field"><label for="profileCode">Código institucional</label><input id="profileCode" readonly></div>
+                <div class="form-field"><label for="profileRank">Rango</label><input id="profileRank" readonly><div class="field-help">El rango solo puede actualizarlo un administrador.</div></div>
+                <div class="form-field"><label for="profileUnit">Unidad / dependencia</label><input id="profileUnit" readonly></div>
+                <div class="form-field"><label for="profileInstitution">Institución</label><input id="profileInstitution" readonly></div>
+              </div>
+              <div class="form-section-title">Datos de contacto editables</div>
+              <div class="profile-fields">
+                <div class="form-field"><label for="profilePhone">Número de celular</label><input id="profilePhone" type="tel" maxlength="15" required></div>
+                <div class="form-field"><label for="profileEmail">Correo de contacto</label><input id="profileEmail" type="email" required></div>
+                <div class="form-field"><label for="profileAddress">Dirección</label><input id="profileAddress" required></div>
+                <div class="form-field"><label for="profileEmergency">Contacto de emergencia</label><input id="profileEmergency" type="tel" maxlength="15"></div>
+              </div>
+              <div class="profile-actions"><button class="primary-btn" type="submit">Guardar cambios</button></div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section id="chatPage" class="page hidden">
+        <section class="panel chat-shell">
+          <aside class="chat-sidebar">
+            <header class="chat-sidebar-head"><h2 id="chatHeading">Consultas ciudadanas</h2><p class="muted" id="chatDescription">Mensajes sobre denuncias asignadas</p><label class="chat-search"><span>⌕</span><input id="chatSearch" placeholder="Buscar ciudadano o denuncia..."></label></header>
+            <div id="conversationList" class="conversation-list"></div>
+          </aside>
+          <div id="chatMain" class="chat-main"></div>
+        </section>
+      </section>
+      <footer class="app-footer">Sistema Ciudadano de Seguimiento de Denuncias · PNP – Fiscalía <span>Prototipo académico</span></footer>
+    </main>
+  </div>
+
+  <div id="logoutConfirmModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="logoutConfirmTitle">
+    <section class="preview-modal logout-confirm-card">
+      <div class="modal-header"><div><p class="eyebrow">CIERRE DE SESIÓN</p><h2 id="logoutConfirmTitle">¿Confirmar cerrar sesión?</h2><p class="muted">Tu sesión actual se cerrará y volverás a la pantalla de acceso.</p></div><button class="modal-close" id="closeLogoutConfirm" type="button" aria-label="Cerrar">×</button></div>
+      <div class="logout-confirm-actions"><button class="secondary-btn" id="cancelLogout" type="button">Cancelar</button><button class="danger-btn" id="confirmLogout" type="button">Confirmar</button></div>
+    </section>
+  </div>
+
+  <div id="casePreview" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+    <section class="preview-modal">
+      <header class="modal-header"><div><h2 id="previewTitle">Vista rápida de denuncia</h2><p class="muted">Información de solo lectura</p></div><button id="closePreview" class="modal-close" type="button" aria-label="Cerrar vista rápida">×</button></header>
+      <div id="previewContent" class="modal-body"></div>
+    </section>
+  </div>
+
+  <!-- Ventana de detalle del expediente (actuaciones, disposiciones, informes y seguimiento de Fiscalía) -->
+  <div id="expModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="expModalTitle">
+    <section class="preview-modal wide-modal">
+      <header class="modal-header"><div><h2 id="expModalTitle">Expediente</h2><p class="muted" id="expModalSubtitle"></p></div><button class="modal-close" type="button" data-cerrar aria-label="Cerrar">×</button></header>
+      <div id="expModalBody" class="modal-body"></div>
+    </section>
+  </div>
+  <!-- Visor de archivos de "Documentos y evidencias" -->
+  <div id="fileModal" class="modal-backdrop hidden file-modal" role="dialog" aria-modal="true" aria-labelledby="fileModalTitle">
+    <section class="preview-modal wide-modal">
+      <header class="modal-header"><div><h2 id="fileModalTitle">Documento</h2><p class="muted" id="fileModalSubtitle"></p></div><div class="file-modal-actions"><a class="primary-btn icon-btn" id="fileModalDownload" href="#" download><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg><span>Descargar</span></a><button class="modal-close" type="button" data-cerrar aria-label="Cerrar">×</button></div></header>
+      <div id="fileModalBody" class="modal-body"></div>
+    </section>
+  </div>
+
+  <!-- Scripts (src/main/resources/static/js): el orden importa -->
+  
+  <script src="js/icons.js?v=7"></script> <!-- 1. Iconos SVG -->
+  <script src="js/api.js?v=7"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
+  <script src="js/app.js?v=7"></script>   <!-- 3. Lógica de las pantallas -->
+  <script src="js/modulos.js?v=7"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
+</body>
+</html>
