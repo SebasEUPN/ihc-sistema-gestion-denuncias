@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
  * Es lo mismo que hace database/04_documentos_archivos.sql.
  *
  * Cada instrucción comprueba antes si la columna existe (INFORMATION_SCHEMA de
- * MySQL), así que puede ejecutarse en cada arranque sin cambiar nada la segunda vez.
- * En la versión en la nube las columnas ya vienen en db/schema-mysql.sql; esta
+ * PostgreSQL), así que puede ejecutarse en cada arranque sin cambiar nada la segunda vez.
+ * En la versión en la nube las columnas ya vienen en db/schema.sql; esta
  * clase sirve para bases creadas con una versión anterior del esquema.
  */
 @Component
@@ -41,7 +41,7 @@ public class MigracionBD implements CommandLineRunner {
         // Los nombres vienen de este mismo archivo (no de un usuario), por eso se pueden concatenar
         Integer existe = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS "
-                + "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?",
+                + "WHERE TABLE_SCHEMA = current_schema() AND TABLE_NAME = ? AND COLUMN_NAME = ?",
                 Integer.class, tabla, columna);
         if (existe == null || existe == 0) {
             jdbc.execute("ALTER TABLE " + tabla + " ADD COLUMN " + columna + " " + definicion);

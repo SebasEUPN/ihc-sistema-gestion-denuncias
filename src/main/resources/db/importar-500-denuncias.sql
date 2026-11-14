@@ -1,5 +1,5 @@
 -- =====================================================================
---  IMPORTACIÓN DE LAS 500 DENUNCIAS DEL EXCEL (versión MySQL)
+--  IMPORTACIÓN DE LAS 500 DENUNCIAS DEL EXCEL (versión PostgreSQL)
 --  Equivale a database/03_importar_excel_500_denuncias.sql de SQL Server.
 --  La ejecuta la clase ImportacionExcel al arrancar, UNA sola vez
 --  (solo si todavía no hay denuncias DEN-2026-...).
@@ -12,7 +12,7 @@ CREATE TABLE imp_funcionario (
     nombres   VARCHAR(80) NOT NULL,
     apellidos VARCHAR(80) NOT NULL,
     dni       VARCHAR(8)  NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 CREATE TABLE imp_excel (
     codigo               VARCHAR(20)  NOT NULL PRIMARY KEY,
     tipo_delito          VARCHAR(60)  NOT NULL,
@@ -24,13 +24,13 @@ CREATE TABLE imp_excel (
     dni                  VARCHAR(8)   NOT NULL,
     correo               VARCHAR(120) NOT NULL,
     telefono             VARCHAR(15)  NOT NULL,
-    fecha_registro       DATETIME(6)  NOT NULL,
-    ultima_actualizacion DATETIME(6)  NOT NULL,
+    fecha_registro       TIMESTAMP  NOT NULL,
+    ultima_actualizacion TIMESTAMP  NOT NULL,
     lugar_hechos         VARCHAR(200) NOT NULL,
     estado_policial      VARCHAR(30)  NOT NULL,
     estado_fiscal        VARCHAR(30)  NOT NULL,
     carpeta_fiscal       VARCHAR(20)  NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 INSERT INTO imp_funcionario (codigo, rango, nombres, apellidos, dni) VALUES
 ('PNP-3001', 'Alférez', 'Elmer', 'Palomino Cárdenas', '99000001'),

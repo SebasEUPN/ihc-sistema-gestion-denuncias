@@ -4,13 +4,13 @@
 
 ## Versión en la nube (Render + Aiven)
 
-Esta versión está preparada para publicarse en **Render** con una base **MySQL** gratuita de **Aiven**
+Esta versión está preparada para publicarse en **Render** con una base **PostgreSQL** gratuita de **Aiven**
 (la misma base la comparten los dos prototipos).
 
 Cambios respecto a la versión local con SQL Server:
 
-- Driver `mysql-connector-j` en lugar de `mssql-jdbc`.
-- La estructura está en `src/main/resources/db/schema-mysql.sql` y se crea sola al arrancar
+- Driver `postgresql` en lugar de `mssql-jdbc` (el plan gratuito de Aiven ya no ofrece MySQL ni SQL Server).
+- La estructura está en `src/main/resources/db/schema.sql` y se crea sola al arrancar
   (reúne los scripts 01, 02 y 04, y la ampliación de columnas del 03). Los scripts de `database/`
   se conservan como referencia de la versión SQL Server.
 - Los archivos (adjuntos del chat, fotos y documentos) se guardan en la tabla `archivo_almacenado`,
@@ -19,7 +19,7 @@ Cambios respecto a la versión local con SQL Server:
 
 | Variable | Ejemplo |
 |---|---|
-| `DB_URL` | `jdbc:mysql://HOST:PUERTO/defaultdb?sslMode=REQUIRED` |
+| `DB_URL` | `jdbc:postgresql://HOST:PUERTO/defaultdb?sslmode=require` |
 | `DB_USER` | `avnadmin` |
 | `DB_PASSWORD` | contraseña del servicio en Aiven |
 
