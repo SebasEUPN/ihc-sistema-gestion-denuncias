@@ -1,0 +1,69 @@
+# Prueba automática: compila los dos prototipos y los arranca contra un
+# PostgreSQL temporal para comprobar el esquema, la carga de datos y el login.
+name: Prueba con PostgreSQL
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  prueba:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: bd_denuncias
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DB_URL: jdbc:postgresql://localhost:5432/bd_denuncias
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: SebasEUPN/ihc-seguimiento-denuncia-portal-ciudadano
+          path: portal
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Compilar sistema de gestión
+        run: mvn -B -q -DskipTests package
+      - name: Compilar portal ciudadano
+        run: mvn -B -q -DskipTests package -f portal/pom.xml
+      - name: Arrancar sistema de gestión
+        run: |
+          PORT=8080 nohup java -jar target/*.jar > sistema.log 2>&1 &
+          for i in $(seq 1 90); do grep -q "Started " sistema.log && break; grep -q "APPLICATION FAILED\|Application run failed" sistema.log && break; sleep 2; done
+          tail -n 60 sistema.log
+          grep -q "Started " sistema.log
+      - name: Probar login de funcionario
+        run: |
+          curl -s -o out.json -w "%{http_code}\n" -c c.txt -H 'Content-Type: application/json' \
+            -d '{"codigo":"PNP-2045","password":"Demo1234","rol":"policia"}' http://localhost:8080/api/auth/login | tee code.txt
+          cat out.json; echo
+          grep -q 200 code.txt
+          curl -s -b c.txt http://localhost:8080/api/denuncias | head -c 400; echo
+          docker run --rm --network host -e PGPASSWORD=postgres postgres:18 psql -h localhost -U postgres bd_denuncias -c "select count(*) denuncias from denuncia" -c "select count(*) usuarios from usuario" -c "select count(*) archivos from archivo_almacenado"
+      - name: Arrancar portal ciudadano
+        run: |
+          PORT=8081 nohup java -jar portal/target/*.jar > portal.log 2>&1 &
+          for i in $(seq 1 90); do grep -q "Started " portal.log && break; grep -q "APPLICATION FAILED\|Application run failed" portal.log && break; sleep 2; done
+          tail -n 60 portal.log
+          grep -q "Started " portal.log
+      - name: Probar consulta del ciudadano
+        run: |
+          curl -s -c p.txt -H 'Content-Type: application/json' -d '{"codigo":"D-000584"}' http://localhost:8081/api/portal/acceso/consulta; echo
+          curl -s -b p.txt -c p.txt -w "\n%{http_code}\n" -H 'Content-Type: application/json' -d '{"pin":"123456"}' http://localhost:8081/api/portal/acceso/verificar | tee v.txt
+          tail -n1 v.txt | grep -q 200
+          curl -s -b p.txt http://localhost:8081/api/portal/denuncias | head -c 400; echo
+          curl -s -c q.txt -H 'Content-Type: application/json' -d '{"codigo":"DEN-2026-000001"}' http://localhost:8081/api/portal/acceso/consulta; echo
+      - name: Registros
+        if: always()
+        run: |
+          echo "==== sistema ===="; grep -i "error\|exception" sistema.log | head -40 || true
+          echo "==== portal ===="; grep -i "error\|exception" portal.log | head -40 || true
