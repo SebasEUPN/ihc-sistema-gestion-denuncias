@@ -48,7 +48,7 @@ jobs:
           cat out.json; echo
           grep -q 200 code.txt
           curl -s -b c.txt http://localhost:8080/api/denuncias | head -c 400; echo
-          docker run --rm --network host -e PGPASSWORD=postgres postgres:18 psql -h localhost -U postgres bd_denuncias -c "select count(*) denuncias from denuncia" -c "select count(*) usuarios from usuario" -c "select count(*) archivos from archivo_almacenado"
+          docker run --rm --network host -e PGPASSWORD=postgres postgres:18 psql -h localhost -U postgres bd_denuncias -c "select count(*) denuncias from denuncia" -c "select rol, count(*) from usuario group by rol order by rol" -c "select count(*) archivos from archivo_almacenado"
       - name: Arrancar portal ciudadano
         run: |
           PORT=8081 nohup java -jar portal/target/*.jar > portal.log 2>&1 &
