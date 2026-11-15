@@ -39,7 +39,9 @@ jobs:
         run: |
           PORT=8080 nohup java -Duser.timezone=America/Lima -jar target/*.jar > app.log 2>&1 &
           for i in $(seq 1 90); do grep -q "Started " app.log && break; sleep 2; done
-          sleep 8; grep -q "Started " app.log
+          grep -q "Started " app.log
+          for i in $(seq 1 60); do grep -q "Importación terminada" app.log && break; sleep 2; done
+          sleep 5
           PORT=8081 nohup java -Duser.timezone=America/Lima -jar portal/target/*.jar > portal.log 2>&1 &
           for i in $(seq 1 90); do grep -q "Started " portal.log && break; sleep 2; done
           grep -q "Started " portal.log
