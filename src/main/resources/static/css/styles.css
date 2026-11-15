@@ -643,6 +643,4 @@ body[data-color-mode="dark"] tbody tr:hover{background:#1a2230}
 body[data-color-mode="dark"] .status{border:1px solid currentColor}
 body[data-color-mode="dark"] .muted,body[data-color-mode="dark"] .breadcrumb{color:#b8c3cf}
 body[data-color-mode="dark"] > div[role="note"]{background:#2b2300!important;color:#ffe08a!important;border-color:#6b5600!important}
-body[data-color-mode="dark"] :is(.brand-mark,.mini-mark){background:#fff}
 body[data-color-mode="dark"] :is(.modal,.modal-card,.dialog,.drawer){background:#151b23;color:#f2f5f8}
-body[data-color-mode="dark"] img.logo,body[data-color-mode="dark"] .brand-mark img{filter:none}
