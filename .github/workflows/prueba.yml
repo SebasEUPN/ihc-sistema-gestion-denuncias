@@ -41,6 +41,9 @@ jobs:
           for i in $(seq 1 90); do grep -q "Started " sistema.log && break; grep -q "APPLICATION FAILED\|Application run failed" sistema.log && break; sleep 2; done
           tail -n 60 sistema.log
           grep -q "Started " sistema.log
+          # Los datos de demostración se cargan después de "Started": se espera a que terminen
+          for i in $(seq 1 60); do grep -q "Importación terminada" sistema.log && break; sleep 2; done
+          sleep 5
       - name: Probar login de funcionario
         run: |
           curl -s -o out.json -w "%{http_code}\n" -c c.txt -H 'Content-Type: application/json' \
