@@ -721,8 +721,8 @@ $("#casePreview").addEventListener("click", e => { if (e.target === $("#casePrev
    Barra de accesibilidad (igual para los tres perfiles)
    --------------------------------------------------------------------- */
 
-// --- Color: vista normal -> paleta para daltonismo -> alto contraste ---
-const MODOS_COLOR = [{ id: "normal", nombre: "vista normal" }, { id: "colorblind", nombre: "paleta apta para daltonismo" }, { id: "contrast", nombre: "alto contraste" }];
+// --- Color: vista normal -> paleta para daltonismo -> alto contraste -> modo oscuro ---
+const MODOS_COLOR = [{ id: "normal", nombre: "vista normal" }, { id: "colorblind", nombre: "paleta apta para daltonismo" }, { id: "contrast", nombre: "alto contraste" }, { id: "dark", nombre: "modo oscuro" }];
 function aplicarModoColor(id) {
   const modo = MODOS_COLOR.find(m => m.id === id) || MODOS_COLOR[0];
   // Los colores de cada modo están en styles.css, en las reglas body[data-color-mode="..."]
