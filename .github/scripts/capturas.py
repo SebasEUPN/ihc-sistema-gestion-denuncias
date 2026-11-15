@@ -36,10 +36,12 @@ async def main():
             # abrir el primer detalle de denuncia (si existe)
             if rol == "policia":
                 await ir(page, "denuncias", "sd-policia-denuncias")
-                btn = await page.query_selector("button.action-icon.view, .action-icon.view, [data-action='ver']")
-                if btn:
-                    await btn.click(); await page.wait_for_timeout(2000)
+                try:
+                    await page.locator(".action-icon.view:visible").first.click(timeout=5000)
+                    await page.wait_for_timeout(2000)
                     await page.screenshot(path=f"{OUT}/sd-policia-detalle.png")
+                except Exception as e:
+                    print("sin detalle:", e)
             await ctx.close()
         # ---- Portal ciudadano ----
         ctx = await ctx_dark(b, "pnp-color-mode"); page = await ctx.new_page()
@@ -49,10 +51,12 @@ async def main():
         await page.screenshot(path=f"{OUT}/pc-01-pin.png")
         await page.fill("#citizenPin", "123456"); await page.keyboard.press("Enter"); await page.wait_for_timeout(2500)
         await page.screenshot(path=f"{OUT}/pc-02-casos.png", full_page=True)
-        opt = await page.query_selector(".case-option")
-        if opt:
-            await opt.click(); await page.wait_for_timeout(2500)
+        try:
+            await page.locator(".case-option:visible").first.click(timeout=5000)
+            await page.wait_for_timeout(2500)
             await page.screenshot(path=f"{OUT}/pc-03-detalle.png", full_page=True)
+        except Exception as e:
+            print("sin detalle:", e)
         for v in ["prosecutor", "notifications", "help"]:
             await page.evaluate("v => { const b=[...document.querySelectorAll('[data-view]')].find(x=>x.dataset.view===v); if(b) b.click(); }", v)
             await page.wait_for_timeout(1500)
