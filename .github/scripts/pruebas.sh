@@ -24,7 +24,7 @@ igual "actividades policiales/fiscales" "$(SQL "select count(id_policia)||'/'||c
 igual "disposiciones sin fiscal o sin policía" "$(SQL "select count(*) from disposicion_fiscal where id_fiscal is null or id_policia is null")" 0
 igual "registros de auditoría de usuarios existentes sin enlazar" "$(SQL "select count(*) from registro_actividad r join usuario u on upper(u.codigo)=upper(r.codigo_usuario) where r.id_policia is null and r.id_fiscal is null and r.id_admin is null")" 0
 if [ "$ESCENARIO" = "migrada" ]; then
-  igual "copia anterior migrada (admin, estado)" "$(SQL "select u.codigo||'/'||c.estado||'/'||c.nombre from copia_seguridad c join admin a on a.id_usuario=c.id_admin join usuario u on u.id_usuario=a.id_usuario where c.archivo is null limit 1")" "ADM-0001/Completada/Backup_001"
+  igual "copia anterior migrada (admin, estado)" "$(SQL "select u.codigo||'/'||c.estado||'/'||c.nombre from copia_seguridad c join admin a on a.id_usuario=c.id_admin join usuario u on u.id_usuario=a.id_usuario where c.archivo is null order by c.id_copia limit 1")" "ADM-0001/Completada/Backup_001"
 fi
 
 echo "== 2. Perfiles desde la aplicación"

@@ -92,7 +92,6 @@ public class MigracionBD implements CommandLineRunner {
         // Las copias anteriores eran demostrativas (sin archivo): conservan su registro en el historial
         jdbc.update("UPDATE copia_seguridad SET nombre = 'Backup_' || LPAD(CAST(id_copia AS VARCHAR), 3, '0'), "
                 + "descripcion = 'Registro anterior (sin archivo de respaldo)', "
-                + "tamano_bytes = CAST(tamano_mb AS BIGINT) * 1048576, "
                 + "estado = CASE WHEN estado = 'Correcto' THEN 'Completada' ELSE estado END WHERE nombre IS NULL");
         jdbc.execute("ALTER TABLE copia_seguridad ALTER COLUMN id_admin SET NOT NULL, ALTER COLUMN nombre SET NOT NULL, "
                 + "DROP COLUMN codigo_usuario, DROP COLUMN tamano_mb");

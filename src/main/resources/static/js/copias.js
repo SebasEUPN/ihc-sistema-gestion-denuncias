@@ -73,7 +73,7 @@ async function renderCopias(mount) {
       <input class="bk-input" id="bkHora" type="time" value="${e(config.hora)}" required>
       <label class="bk-label" for="bkDias">Conservar copias durante</label>
       <select class="bk-input" id="bkDias">${opciones([...new Set([...CONSERVACION_COPIA, config.diasConservacion])].sort((a, b) => a - b).map(d => [d, d + " días"]), config.diasConservacion)}</select>
-      <p class="bk-help" id="bkAutoInfo">${config.activo ? `Programada: ${e(FRECUENCIAS_COPIA.find(f => f[0] === config.frecuencia)[1].toLowerCase())} a las ${hora12(config.hora)}.` : "Las copias automáticas están desactivadas."}${config.ultimaAutomatica ? ` Última copia automática: ${fechaHora(config.ultimaAutomatica)}.` : ""}${config.actualizadoPor ? ` Configurado por ${e(config.actualizadoPor)}.` : ""}</p>
+      <p class="bk-help" id="bkAutoInfo">${config.activo ? `Programada: ${e(FRECUENCIAS_COPIA.find(f => f[0] === config.frecuencia)[1].toLowerCase())} a las ${hora12(config.hora).replace(/\.$/, "")}.` : "Las copias automáticas están desactivadas."}${config.ultimaAutomatica ? ` Última copia automática: ${fechaHora(config.ultimaAutomatica)}.` : ""}${config.actualizadoPor ? ` Configurado por ${e(config.actualizadoPor)}.` : ""}</p>
       <button class="bk-btn bk-secondary" type="submit">Guardar configuración</button>
     </form>
 
