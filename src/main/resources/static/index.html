@@ -6,7 +6,7 @@
   <meta name="description" content="Sistema de Gestión y Seguimiento de Denuncias PNP y Fiscalía">
   <title>Prototipo IHC (fines didácticos) · Sistema de gestión de denuncias</title>
   <!-- Hoja de estilos (src/main/resources/static/css/styles.css) -->
-  <link rel="stylesheet" href="css/styles.css?v=7">
+  <link rel="stylesheet" href="css/styles.css?v=8">
 </head>
 <body>
 <div role="note" style="background:#FFF4CC;color:#5c4400;border-bottom:1px solid #e0c96b;font:600 13px/1.4 system-ui,Segoe UI,Arial,sans-serif;text-align:center;padding:6px 12px">Prototipo académico IHC con fines didácticos (sistema de gestión de denuncias). No es un sitio oficial de la PNP ni del Ministerio Público; los datos son ficticios.</div>
@@ -163,7 +163,7 @@
             <article data-term="bloquear activar cuenta estado" data-roles="admin"><h3>Habilitar / Deshabilitar</h3><p>Activa o bloquea la cuenta de un funcionario. Una cuenta deshabilitada no puede iniciar sesión.</p></article>
             <article data-term="modulos accesos perfil" data-roles="admin"><h3>Permisos</h3><p>Módulos que puede usar cada funcionario. Si se desmarca un módulo, desaparece de su menú.</p></article>
             <article data-term="auditoria historial operaciones" data-roles="admin"><h3>Registros de actividades</h3><p>Lista de las operaciones realizadas en el sistema: quién hizo qué y cuándo.</p></article>
-            <article data-term="respaldo backup" data-roles="admin"><h3>Copias de seguridad</h3><p>Historial de respaldos de la información. En este prototipo la copia es simulada.</p></article>
+            <article data-term="respaldo backup" data-roles="admin"><h3>Copias de seguridad</h3><p>Respaldos de la información del sistema: se pueden crear, programar, descargar y restaurar.</p></article>
         </div>
         <p id="noTerms" class="empty-report hidden">No encontramos términos con esa búsqueda.</p>
       </section>
@@ -387,9 +387,10 @@
 
   <!-- Scripts (src/main/resources/static/js): el orden importa -->
   
-  <script src="js/icons.js?v=7"></script> <!-- 1. Iconos SVG -->
-  <script src="js/api.js?v=7"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
-  <script src="js/app.js?v=7"></script>   <!-- 3. Lógica de las pantallas -->
-  <script src="js/modulos.js?v=7"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
+  <script src="js/icons.js?v=8"></script> <!-- 1. Iconos SVG -->
+  <script src="js/api.js?v=8"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
+  <script src="js/app.js?v=8"></script>   <!-- 3. Lógica de las pantallas -->
+  <script src="js/modulos.js?v=8"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
+  <script src="js/copias.js?v=8"></script>  <!-- 5. Copias de seguridad del administrador -->
 </body>
 </html>

@@ -1,12 +1,21 @@
 # Prueba automática: compila los dos prototipos y los arranca contra un
-# PostgreSQL temporal para comprobar el esquema, la carga de datos y el login.
+# PostgreSQL temporal. Se prueba en dos escenarios:
+#   nueva   -> base de datos vacía (se crea con db/schema.sql)
+#   migrada -> base creada con la versión ANTERIOR del sistema (todos los datos
+#              en "usuario") y actualizada por MigracionBD
 name: Prueba con PostgreSQL
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   prueba:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        escenario: [nueva, migrada]
     services:
       postgres:
         image: postgres:18
@@ -20,53 +29,75 @@ jobs:
       DB_URL: jdbc:postgresql://localhost:5432/bd_denuncias
       DB_USER: postgres
       DB_PASSWORD: postgres
+      TZ: America/Lima
+      ESCENARIO: ${{ matrix.escenario }}
+      # En la prueba, las copias automáticas se revisan cada 15 s (en producción, cada 5 min)
+      APP_COPIAS_REVISION_INICIAL_MS: "15000"
+      APP_COPIAS_REVISION_MS: "15000"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
           repository: SebasEUPN/ihc-seguimiento-denuncia-portal-ciudadano
+          ref: ${{ github.ref_name }}
           path: portal
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
           cache: maven
+      - name: Base creada con la versión anterior (solo escenario "migrada")
+        if: matrix.escenario == 'migrada'
+        run: |
+          git clone -q https://github.com/SebasEUPN/ihc-sistema-gestion-denuncias anterior
+          git -C anterior checkout -q 6f9c0b7
+          mvn -B -q -DskipTests package -f anterior/pom.xml
+          PORT=8090 nohup java -jar anterior/target/*.jar > anterior.log 2>&1 &
+          for i in $(seq 1 120); do grep -q "adicionales creados" anterior.log && break; sleep 2; done
+          sleep 5; grep -q "adicionales creados" anterior.log
+          pkill -f "anterior/target" || true; sleep 3
+          docker run --rm --network host -e PGPASSWORD=postgres postgres:18 psql -h localhost -U postgres bd_denuncias \
+            -c "insert into copia_seguridad (fecha_hora, tamano_mb, estado, codigo_usuario) values (now(), 248, 'Correcto', 'ADM-0001')" \
+            -c "select rol, count(*), count(rango) con_rango, count(dependencia) con_dependencia from usuario group by rol order by rol"
       - name: Compilar sistema de gestión
         run: mvn -B -q -DskipTests package
       - name: Compilar portal ciudadano
         run: mvn -B -q -DskipTests package -f portal/pom.xml
       - name: Arrancar sistema de gestión
         run: |
-          PORT=8080 nohup java -jar target/*.jar > sistema.log 2>&1 &
+          PORT=8080 nohup java -Duser.timezone=America/Lima -jar target/*.jar > sistema.log 2>&1 &
           for i in $(seq 1 90); do grep -q "Started " sistema.log && break; grep -q "APPLICATION FAILED\|Application run failed" sistema.log && break; sleep 2; done
-          tail -n 60 sistema.log
           grep -q "Started " sistema.log
           # Los datos de demostración se cargan después de "Started": se espera a que terminen
-          for i in $(seq 1 60); do grep -q "Importación terminada" sistema.log && break; sleep 2; done
-          sleep 5
-      - name: Probar login de funcionario
-        run: |
-          curl -s -o out.json -w "%{http_code}\n" -c c.txt -H 'Content-Type: application/json' \
-            -d '{"codigo":"PNP-2045","password":"Demo1234","rol":"policia"}' http://localhost:8080/api/auth/login | tee code.txt
-          cat out.json; echo
-          grep -q 200 code.txt
-          curl -s -b c.txt http://localhost:8080/api/denuncias | head -c 400; echo
-          docker run --rm --network host -e PGPASSWORD=postgres postgres:18 psql -h localhost -U postgres bd_denuncias -c "select count(*) denuncias from denuncia" -c "select rol, count(*) from usuario group by rol order by rol" -c "select count(*) archivos from archivo_almacenado"
+          if [ "$ESCENARIO" = "nueva" ]; then for i in $(seq 1 60); do grep -q "adicionales creados" sistema.log && break; sleep 2; done; fi
+          sleep 6
       - name: Arrancar portal ciudadano
         run: |
-          PORT=8081 nohup java -jar portal/target/*.jar > portal.log 2>&1 &
+          PORT=8081 nohup java -Duser.timezone=America/Lima -jar portal/target/*.jar > portal.log 2>&1 &
           for i in $(seq 1 90); do grep -q "Started " portal.log && break; grep -q "APPLICATION FAILED\|Application run failed" portal.log && break; sleep 2; done
-          tail -n 60 portal.log
-          grep -q "Started " portal.log
-      - name: Probar consulta del ciudadano
+          grep -q "Started " portal.log; sleep 4
+      - name: Pruebas de estructura, perfiles, copias de seguridad y portal
         run: |
-          curl -s -c p.txt -H 'Content-Type: application/json' -d '{"codigo":"D-000584"}' http://localhost:8081/api/portal/acceso/consulta; echo
-          curl -s -b p.txt -c p.txt -w "\n%{http_code}\n" -H 'Content-Type: application/json' -d '{"pin":"123456"}' http://localhost:8081/api/portal/acceso/verificar | tee v.txt
-          tail -n1 v.txt | grep -q 200
-          curl -s -b p.txt http://localhost:8081/api/portal/denuncias | head -c 400; echo
-          curl -s -c q.txt -H 'Content-Type: application/json' -d '{"codigo":"DEN-2026-000001"}' http://localhost:8081/api/portal/acceso/consulta; echo
+          mkdir -p resultados/$ESCENARIO
+          bash .github/scripts/pruebas.sh 2>&1 | tee resultados/$ESCENARIO/pruebas.txt
+      - name: Capturas de pantalla
+        if: always() && matrix.escenario == 'migrada' && github.ref_name != 'main'
+        run: |
+          pip install -q playwright
+          python .github/scripts/capturas.py resultados/$ESCENARIO/capturas 2>&1 | tail -20
       - name: Registros
         if: always()
         run: |
-          echo "==== sistema ===="; grep -i "error\|exception" sistema.log | head -40 || true
-          echo "==== portal ===="; grep -i "error\|exception" portal.log | head -40 || true
+          mkdir -p resultados/$ESCENARIO
+          grep -i "error\|exception\|Migración\|Caused" sistema.log | head -80 > resultados/$ESCENARIO/sistema-log.txt || true
+          grep -i "error\|exception\|Caused" portal.log | head -60 > resultados/$ESCENARIO/portal-log.txt || true
+          tail -n 40 sistema.log >> resultados/$ESCENARIO/sistema-log.txt || true
+          cat resultados/$ESCENARIO/sistema-log.txt | head -60
+      - name: Guardar resultados en la rama (solo ramas de trabajo)
+        if: always() && github.ref_name != 'main'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -f resultados
+          git commit -q -m "Resultados de la prueba ($ESCENARIO) [skip ci]" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase origin "${{ github.ref_name }}" && git push -q && break; sleep 5; done

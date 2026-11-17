@@ -39,6 +39,17 @@ public class RegistroActividad {
     private String resultado;
 
     /** Constructor vacío obligatorio para JPA. */
+    // Quién hizo la operación: se llena la columna de la tabla de su perfil
+    // ("policia", "fiscal" o "admin"). Quedan vacías si el código no existe.
+    @Column(name = "id_policia")
+    private Long idPolicia;
+
+    @Column(name = "id_fiscal")
+    private Long idFiscal;
+
+    @Column(name = "id_admin")
+    private Long idAdmin;
+
     public RegistroActividad() {
     }
 
@@ -51,7 +62,25 @@ public class RegistroActividad {
     }
 
     // ----- Getters -----
+    /** Enlaza el registro con el usuario que hizo la operación, según su perfil. */
+    public RegistroActividad de(Usuario usuario) {
+        if (usuario == null) {
+            return this;
+        }
+        if (usuario.getRol() == Rol.POLICIA) {
+            this.idPolicia = usuario.getId();
+        } else if (usuario.getRol() == Rol.FISCAL) {
+            this.idFiscal = usuario.getId();
+        } else {
+            this.idAdmin = usuario.getId();
+        }
+        return this;
+    }
+
     public Long getId() { return id; }
+    public Long getIdPolicia() { return idPolicia; }
+    public Long getIdFiscal() { return idFiscal; }
+    public Long getIdAdmin() { return idAdmin; }
     public LocalDateTime getFechaHora() { return fechaHora; }
     public String getCodigoUsuario() { return codigoUsuario; }
     public String getActividad() { return actividad; }

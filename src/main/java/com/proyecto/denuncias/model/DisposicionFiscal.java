@@ -42,6 +42,14 @@ public class DisposicionFiscal {
     private String estado;
 
     /** Constructor vacío obligatorio para JPA. */
+    // Fiscal que emite la disposición (tabla "fiscal")
+    @Column(name = "id_fiscal")
+    private Long idFiscal;
+
+    // Funcionario policial a cargo de la denuncia, a quien se comunica (tabla "policia")
+    @Column(name = "id_policia")
+    private Long idPolicia;
+
     public DisposicionFiscal() {
     }
 
@@ -55,7 +63,16 @@ public class DisposicionFiscal {
     }
 
     // ----- Getters -----
+    /** Enlaza la disposición con el fiscal que la emite y el policía a cargo de la denuncia. */
+    public DisposicionFiscal vincular(Usuario fiscal, Usuario policia) {
+        this.idFiscal = fiscal == null ? null : fiscal.getId();
+        this.idPolicia = policia == null ? null : policia.getId();
+        return this;
+    }
+
     public Long getId() { return id; }
+    public Long getIdFiscal() { return idFiscal; }
+    public Long getIdPolicia() { return idPolicia; }
     public String getNumero() { return numero; }
     public String getCarpetaFiscal() { return carpetaFiscal; }
     public String getTipo() { return tipo; }

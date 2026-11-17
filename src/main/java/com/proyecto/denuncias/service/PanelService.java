@@ -54,7 +54,7 @@ public class PanelService {
         if (rol == Rol.FISCAL) {
             return List.of(
                     new IndicadorDTO("Carpetas asignadas", texto(denuncias), "Carpetas fiscales"),
-                    new IndicadorDTO("Diligencias pendientes", texto(actividadRepository.countByPerfilAndFechaHoraAfter(Rol.FISCAL, LocalDateTime.now())), "Por atender"),
+                    new IndicadorDTO("Diligencias pendientes", texto(actividadRepository.countByIdFiscalIsNotNullAndFechaHoraAfter(LocalDateTime.now())), "Por atender"),
                     new IndicadorDTO("En investigación", texto(denunciaRepository.countByEstadoFiscal("En investigación")), "Investigaciones activas"),
                     new IndicadorDTO("Con disposición", texto(denunciaRepository.countByEstadoFiscal("Con disposición")), "Disposiciones registradas"));
         }

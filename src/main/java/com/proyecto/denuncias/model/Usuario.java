@@ -11,6 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SecondaryTable;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -24,6 +28,13 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "usuario")
+// Los datos propios de cada perfil están en tablas separadas (1 a 1 con "usuario").
+// Hibernate las une con LEFT JOIN y solo guarda la fila de la tabla del perfil
+// que tiene datos: un policía tiene fila en "policia", un fiscal en "fiscal" y
+// un administrador en "admin".
+@SecondaryTable(name = "policia", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id_usuario"))
+@SecondaryTable(name = "fiscal", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id_usuario"))
+@SecondaryTable(name = "admin", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id_usuario"))
 public class Usuario {
 
     // Clave primaria generada por SQL Server (IDENTITY)
@@ -65,21 +76,31 @@ public class Usuario {
     private String contactoEmergencia;
 
     // PNP, Fiscalía o Administración
-    @Column(name = "institucion", nullable = false, length = 30)
-    private String institucion;
-
-    // El perfil se guarda como texto (ADMIN, POLICIA, FISCAL)
     @Enumerated(EnumType.STRING)
     @Column(name = "rol", nullable = false, length = 10)
     private Rol rol;
 
-    @Column(name = "rango", length = 60)
-    private String rango;
+    // ----- Tabla "policia" -----
+    @Column(name = "rango", table = "policia", length = 60)
+    private String policiaRango;
 
-    @Column(name = "dependencia", length = 120)
-    private String dependencia;
+    @Column(name = "dependencia", table = "policia", length = 120)
+    private String policiaDependencia;
 
-    // true = la cuenta puede iniciar sesión
+    // ----- Tabla "fiscal" -----
+    @Column(name = "cargo", table = "fiscal", length = 60)
+    private String fiscalCargo;
+
+    @Column(name = "despacho", table = "fiscal", length = 120)
+    private String fiscalDespacho;
+
+    // ----- Tabla "admin" -----
+    @Column(name = "cargo", table = "admin", length = 60)
+    private String adminCargo;
+
+    @Column(name = "oficina", table = "admin", length = 120)
+    private String adminOficina;
+
     @Column(name = "habilitado", nullable = false)
     private boolean habilitado = true;
 
@@ -133,14 +154,60 @@ public class Usuario {
     public void setDireccion(String direccion) { this.direccion = direccion; }
     public String getContactoEmergencia() { return contactoEmergencia; }
     public void setContactoEmergencia(String contactoEmergencia) { this.contactoEmergencia = contactoEmergencia; }
-    public String getInstitucion() { return institucion; }
-    public void setInstitucion(String institucion) { this.institucion = institucion; }
     public Rol getRol() { return rol; }
-    public void setRol(Rol rol) { this.rol = rol; }
-    public String getRango() { return rango; }
-    public void setRango(String rango) { this.rango = rango; }
-    public String getDependencia() { return dependencia; }
-    public void setDependencia(String dependencia) { this.dependencia = dependencia; }
+
+    /** Al cambiar el perfil, el rango y la dependencia pasan a la tabla del nuevo perfil. */
+    public void setRol(Rol rol) {
+        String rango = getRango();
+        String dependencia = getDependencia();
+        this.rol = rol;
+        policiaRango = policiaDependencia = fiscalCargo = fiscalDespacho = adminCargo = adminOficina = null;
+        setRango(rango);
+        setDependencia(dependencia);
+    }
+
+    /** Institución a la que pertenece la cuenta; se deduce del perfil. */
+    public String getInstitucion() {
+        if (rol == Rol.POLICIA) return "PNP";
+        if (rol == Rol.FISCAL) return "Fiscalía";
+        return "Administración";
+    }
+
+    /** Rango (policía) o cargo (fiscal y administrador), según el perfil. */
+    public String getRango() {
+        if (rol == Rol.POLICIA) return policiaRango;
+        if (rol == Rol.FISCAL) return fiscalCargo;
+        return adminCargo;
+    }
+
+    public void setRango(String rango) {
+        if (rol == Rol.POLICIA) policiaRango = rango;
+        else if (rol == Rol.FISCAL) fiscalCargo = rango;
+        else adminCargo = rango;
+    }
+
+    /** Dependencia policial, despacho fiscal u oficina del administrador, según el perfil. */
+    public String getDependencia() {
+        if (rol == Rol.POLICIA) return policiaDependencia;
+        if (rol == Rol.FISCAL) return fiscalDespacho;
+        return adminOficina;
+    }
+
+    public void setDependencia(String dependencia) {
+        if (rol == Rol.POLICIA) policiaDependencia = dependencia;
+        else if (rol == Rol.FISCAL) fiscalDespacho = dependencia;
+        else adminOficina = dependencia;
+    }
+
+    /** Toda cuenta debe tener su fila en la tabla de su perfil (otras tablas la referencian). */
+    @PrePersist
+    @PreUpdate
+    void asegurarFilaDelPerfil() {
+        if (getDependencia() == null || getDependencia().isBlank()) {
+            setDependencia("No registrada");
+        }
+    }
+
     public boolean isHabilitado() { return habilitado; }
     public void setHabilitado(boolean habilitado) { this.habilitado = habilitado; }
     public String getFoto() { return foto; }

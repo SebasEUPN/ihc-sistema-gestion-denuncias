@@ -37,7 +37,7 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
 
     // Funcionario policial responsable de una denuncia: [código, nombres, apellidos, rango].
     // Consulta SQL directa porque id_usuario_responsable la agrega el script 02 y no está en la entidad.
-    @Query(value = "select u.codigo, u.nombres, u.apellidos, u.rango from denuncia d join usuario u on u.id_usuario = d.id_usuario_responsable where d.codigo = :codigo", nativeQuery = true)
+    @Query(value = "select u.codigo, u.nombres, u.apellidos, p.rango from denuncia d join usuario u on u.id_usuario = d.id_usuario_responsable left join policia p on p.id_usuario = u.id_usuario where d.codigo = :codigo", nativeQuery = true)
     List<Object[]> responsablePolicial(@Param("codigo") String codigo);
 
     // ------------------------------------------------------------------

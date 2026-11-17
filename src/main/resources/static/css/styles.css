@@ -644,3 +644,127 @@ body[data-color-mode="dark"] .status{border:1px solid currentColor}
 body[data-color-mode="dark"] .muted,body[data-color-mode="dark"] .breadcrumb{color:#b8c3cf}
 body[data-color-mode="dark"] > div[role="note"]{background:#2b2300!important;color:#ffe08a!important;border-color:#6b5600!important}
 body[data-color-mode="dark"] :is(.modal,.modal-card,.dialog,.drawer){background:#151b23;color:#f2f5f8}
+
+/* =====================================================================
+   Copias de seguridad (administrador): formulario de cuatro secciones
+   ===================================================================== */
+.status.red{background:#fde8e8;color:#b42318}
+.bk-card{background:var(--white);border:1px solid var(--line);border-radius:14px;max-width:760px;margin:0 auto 24px;box-shadow:0 3px 12px #1d3b5c08;overflow:hidden}
+.bk-head{padding:22px 24px 6px}
+.bk-head h2{font-size:20px;margin:0 0 6px;color:var(--ink)}
+.bk-head .muted{font-size:12px;max-width:none;margin:0}
+.bk-section{padding:18px 24px 20px;border-top:1px solid var(--line);margin:0}
+.bk-section:first-of-type{border-top:0}
+.bk-section h3{font-size:15px;margin:0 0 6px;color:var(--ink)}
+.bk-help{font-size:11.5px;color:var(--muted);margin:0 0 4px;line-height:1.5}
+.bk-label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 6px}
+.bk-input{display:block;width:100%;min-height:44px;border:1px solid var(--line);border-radius:9px;background:#f3f5f8;color:var(--ink);font:inherit;font-size:13px;padding:10px 12px}
+textarea.bk-input{resize:vertical;min-height:64px}
+.bk-input:focus,.bk-toggle:focus-visible,.bk-btn:focus-visible{outline:3px solid #7eb6ed;outline-offset:2px;border-color:var(--blue)}
+.bk-btn{display:block;width:100%;min-height:46px;border-radius:9px;font:inherit;font-size:14px;font-weight:700;margin-top:14px;cursor:pointer;border:1px solid transparent}
+.bk-btn:disabled{opacity:.55;cursor:not-allowed}
+.bk-primary{background:#2563eb;color:#fff}
+.bk-primary:hover:not(:disabled){background:#1d4fd7}
+.bk-secondary{background:var(--white);color:var(--ink);border-color:var(--line)}
+.bk-secondary:hover:not(:disabled){background:#f3f5f8}
+.bk-danger{background:#b91c1c;color:#fff}
+.bk-danger:hover:not(:disabled){background:#991b1b}
+.bk-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;font-size:13px;color:var(--ink)}
+.bk-toggle{border:1px solid #b9c3cf;background:#edf0f3;color:#52606d;border-radius:20px;padding:6px 14px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;min-width:104px}
+.bk-toggle.on{background:#d9f5e5;border-color:#13784f;color:#0f6b45}
+.bk-list-head{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:6px 0 10px;border-bottom:1px solid var(--line)}
+.bk-list{list-style:none;margin:0;padding:0}
+.bk-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
+.bk-list li small{display:block;font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
+.bk-list .bk-empty{color:var(--muted);font-size:12px;justify-content:flex-start}
+.bk-foot{padding:12px 24px;border-top:1px solid var(--line);text-align:right;font-size:11.5px;color:var(--muted)}
+.bk-modal{width:min(920px,96vw);max-height:90vh;overflow:auto}
+.bk-table-wrap{overflow:auto}
+.bk-table{width:100%;border-collapse:collapse;font-size:12px}
+.bk-table th,.bk-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+.bk-table td:first-child{white-space:normal;min-width:170px}
+.bk-table td small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+.bk-warning{background:#fff8eb;border:1px solid #f1d59a;color:#5c4400;border-radius:9px;padding:12px 14px;font-size:12.5px;line-height:1.55;margin:0 0 6px}
+.bk-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+@media (max-width:640px){.bk-head,.bk-section,.bk-foot{padding-left:16px;padding-right:16px}}
+body[data-color-mode="contrast"] :is(.bk-input,.bk-toggle,.bk-secondary){background:#fff;color:#000;border:1.5px solid #000}
+body[data-color-mode="contrast"] .bk-primary{background:#003b8f}
+body[data-color-mode="contrast"] .bk-toggle.on{background:#000;color:#fff}
+body[data-color-mode="dark"] .bk-card{background:#151b23;border-color:#2f3a48}
+body[data-color-mode="dark"] :is(.bk-secondary){background:#151b23;color:#f2f5f8;border-color:#5a6878}
+body[data-color-mode="dark"] .bk-secondary:hover:not(:disabled){background:#223041}
+body[data-color-mode="dark"] .bk-toggle{background:#1c2632;color:#c2ccd6;border-color:#5a6878}
+body[data-color-mode="dark"] .bk-toggle.on{background:#0f3a29;color:#7fe0b0;border-color:#5fd39e}
+body[data-color-mode="dark"] .bk-primary{background:#3d82c4}
+body[data-color-mode="dark"] .bk-danger{background:#b3261e}
+body[data-color-mode="dark"] .bk-warning{background:#2b2300;color:#ffe08a;border-color:#6b5600}
+body[data-color-mode="dark"] .status.red{background:#3a1715;color:#ff9c94}
+body[data-color-mode="dark"] .bk-table th{background:#1c2632}
+body[data-color-mode="protanopia"] .bk-primary{background:#0060B0}
+body[data-color-mode="protanopia"] .bk-danger{background:#7A3300}
+body[data-color-mode="protanopia"] .bk-toggle.on{background:#D9ECFF;color:#00507F;border-color:#00507F}
+body[data-color-mode="deuteranopia"] .bk-primary{background:#1F449C}
+body[data-color-mode="deuteranopia"] .bk-danger{background:#7A2459}
+body[data-color-mode="deuteranopia"] .bk-toggle.on{background:#D6E9FF;color:#0B3C7A;border-color:#0B3C7A}
+body[data-color-mode="tritanopia"] .bk-primary{background:#00666F}
+body[data-color-mode="tritanopia"] .bk-danger{background:#8C0F22}
+body[data-color-mode="tritanopia"] .bk-toggle.on{background:#D3F0F1;color:#00565E;border-color:#00565E}
+body[data-color-mode="mono"] .bk-primary{background:#2B2B2B}
+body[data-color-mode="mono"] .bk-danger{background:#1f1f1f}
+body[data-color-mode="mono"] .bk-toggle.on{background:#E4E4E4;color:#1F1F1F;border-color:#1F1F1F}
+
+/* =====================================================================
+   Modos de color para distintos tipos de daltonismo (botón "Color").
+   Cada paleta usa solo colores que ese tipo de visión distingue bien, y
+   los estados siempre llevan texto además del color.
+   ===================================================================== */
+/* Protanopia (dificultad con el rojo): azul y amarillo; el rojo se reemplaza por naranja oscuro */
+body[data-color-mode="protanopia"]{--blue:#0060B0;--green:#00507F;--navy:#0B2E59;--pale:#E8F2FB;--ink:#10202F;--muted:#44586B;--line:#BFD0E0}
+body[data-color-mode="protanopia"] .status{border:1px solid currentColor}
+body[data-color-mode="protanopia"] .status.green{background:#D9ECFF;color:#00507F}
+body[data-color-mode="protanopia"] .status.blue{background:#E3F2FC;color:#1B5E8C}
+body[data-color-mode="protanopia"] :is(.status.amber,.status.yellow){background:#FFF3A6;color:#5C4A00}
+body[data-color-mode="protanopia"] .status.red{background:#FFE1C7;color:#7A3300}
+body[data-color-mode="protanopia"] .secure-tag{background:#D9ECFF;color:#00507F}
+body[data-color-mode="protanopia"] .primary-btn{background:linear-gradient(110deg,#0B2E59,#0060B0)}
+body[data-color-mode="protanopia"] :is(.send-btn,.toast){background:#0B2E59}
+body[data-color-mode="protanopia"] .danger-btn{background:#7A3300;border-color:#7A3300;color:#fff}
+body[data-color-mode="protanopia"] .access-btn#colorMode{border-color:var(--blue);color:var(--blue)}
+/* Deuteranopia (dificultad con el verde): azul índigo y naranja; el verde se reemplaza por celeste */
+body[data-color-mode="deuteranopia"]{--blue:#1F449C;--green:#0B3C7A;--navy:#1B2A6B;--pale:#EAEEFA;--ink:#151B33;--muted:#4A5270;--line:#C6CDE3}
+body[data-color-mode="deuteranopia"] .status{border:1px solid currentColor}
+body[data-color-mode="deuteranopia"] .status.green{background:#D6E9FF;color:#0B3C7A}
+body[data-color-mode="deuteranopia"] .status.blue{background:#E3EBFB;color:#28549E}
+body[data-color-mode="deuteranopia"] :is(.status.amber,.status.yellow){background:#FFE6BD;color:#8A4A00}
+body[data-color-mode="deuteranopia"] .status.red{background:#F8DDEC;color:#7A2459}
+body[data-color-mode="deuteranopia"] .secure-tag{background:#D6E9FF;color:#0B3C7A}
+body[data-color-mode="deuteranopia"] .primary-btn{background:linear-gradient(110deg,#1B2A6B,#1F449C)}
+body[data-color-mode="deuteranopia"] :is(.send-btn,.toast){background:#1B2A6B}
+body[data-color-mode="deuteranopia"] .danger-btn{background:#7A2459;border-color:#7A2459;color:#fff}
+body[data-color-mode="deuteranopia"] .access-btn#colorMode{border-color:var(--blue);color:var(--blue)}
+/* Tritanopia (dificultad con azul y amarillo): verde azulado y rojo; se evita el amarillo */
+body[data-color-mode="tritanopia"]{--blue:#00666F;--green:#00565E;--navy:#0E3A40;--pale:#E6F4F5;--ink:#12282B;--muted:#4A6164;--line:#C2D6D8}
+body[data-color-mode="tritanopia"] .status{border:1px solid currentColor}
+body[data-color-mode="tritanopia"] .status.green{background:#D3F0F1;color:#00565E}
+body[data-color-mode="tritanopia"] .status.blue{background:#E6ECEC;color:#3D4F52}
+body[data-color-mode="tritanopia"] :is(.status.amber,.status.yellow){background:#FFDCE1;color:#9B1B30}
+body[data-color-mode="tritanopia"] .status.red{background:#FFD0D6;color:#8C0F22}
+body[data-color-mode="tritanopia"] .secure-tag{background:#D3F0F1;color:#00565E}
+body[data-color-mode="tritanopia"] .primary-btn{background:linear-gradient(110deg,#0E3A40,#00666F)}
+body[data-color-mode="tritanopia"] :is(.send-btn,.toast){background:#0E3A40}
+body[data-color-mode="tritanopia"] .danger-btn{background:#8C0F22;border-color:#8C0F22;color:#fff}
+body[data-color-mode="tritanopia"] .access-btn#colorMode{border-color:var(--blue);color:var(--blue)}
+/* Acromatopsia (visión sin color): escala de grises con contraste alto */
+body[data-color-mode="mono"]{--blue:#2B2B2B;--green:#1F1F1F;--navy:#111111;--pale:#EFEFEF;--ink:#111111;--muted:#4D4D4D;--line:#BDBDBD}
+body[data-color-mode="mono"] .status{border:1px solid currentColor}
+body[data-color-mode="mono"] .status.green{background:#E4E4E4;color:#1F1F1F}
+body[data-color-mode="mono"] .status.blue{background:#F3F3F3;color:#333333}
+body[data-color-mode="mono"] :is(.status.amber,.status.yellow){background:#FFFFFF;color:#000000}
+body[data-color-mode="mono"] .status.red{background:#3A3A3A;color:#FFFFFF}
+body[data-color-mode="mono"] .secure-tag{background:#E4E4E4;color:#1F1F1F}
+body[data-color-mode="mono"] .primary-btn{background:linear-gradient(110deg,#111111,#2B2B2B)}
+body[data-color-mode="mono"] :is(.send-btn,.toast){background:#111111}
+body[data-color-mode="mono"] .danger-btn{background:#1f1f1f;border-color:#000;color:#fff}
+body[data-color-mode="mono"] .access-btn#colorMode{border-color:var(--blue);color:var(--blue)}
+/* En acromatopsia toda la página (imágenes y gráficos incluidos) pasa a escala de grises */
+html:has(body[data-color-mode="mono"]){filter:grayscale(1)}

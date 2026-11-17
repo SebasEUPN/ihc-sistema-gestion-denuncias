@@ -104,10 +104,17 @@ public class UsuariosAdicionales implements CommandLineRunner {
     }
 
     private void insertar(String[] d, String hash, String institucion, String rol, List<String> modulos) {
-        jdbc.update("INSERT INTO usuario (codigo, password_hash, nombres, apellidos, dni, institucion, rol, rango, "
-                        + "dependencia, telefono, correo, habilitado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)",
-                d[0], hash, d[1], d[2], d[3], institucion, rol, d[4], d[5], d[6], d[7]);
+        // Datos comunes en "usuario"...
+        jdbc.update("INSERT INTO usuario (codigo, password_hash, nombres, apellidos, dni, rol, telefono, correo, habilitado) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE)",
+                d[0], hash, d[1], d[2], d[3], rol, d[6], d[7]);
         Long id = jdbc.queryForObject("SELECT id_usuario FROM usuario WHERE codigo = ?", Long.class, d[0]);
+        // ...y los propios del perfil en su tabla ("admin" o "fiscal")
+        if ("ADMIN".equals(rol)) {
+            jdbc.update("INSERT INTO admin (id_usuario, cargo, oficina) VALUES (?, ?, ?)", id, d[4], d[5]);
+        } else {
+            jdbc.update("INSERT INTO fiscal (id_usuario, cargo, despacho) VALUES (?, ?, ?)", id, d[4], d[5]);
+        }
         for (String m : modulos) {
             jdbc.update("INSERT INTO usuario_permiso (id_usuario, modulo) VALUES (?, ?)", id, m);
         }

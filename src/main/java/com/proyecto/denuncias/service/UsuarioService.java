@@ -126,7 +126,6 @@ public class UsuarioService {
         usuario.setFechaNacimiento(datos.fechaNacimiento());
         usuario.setTelefono(telefono);
         usuario.setCorreo(correo);
-        usuario.setInstitucion(institucionEsperada);
         usuario.setRol(rol);
         usuario.setDependencia(dependencia);
         usuario.setHabilitado(datos.habilitado());

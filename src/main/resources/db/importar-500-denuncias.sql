@@ -610,11 +610,18 @@ INSERT INTO imp_excel (codigo, tipo_delito, despacho_fiscal, fiscal_responsable,
 ('DEN-2026-000500', 'Acoso', 'Fiscalía Provincial Penal Corporativa de Callao – 2.° Despacho', 'Dra. Flor Díaz Gutiérrez', 'PNP-3016', 'Julio', 'Yupanqui Gutiérrez', '26620323', 'julio.yupanqui@example.com', '+51 984 964 784', '2026-11-01 12:07:00', '2026-11-03 22:39:00', 'Av. Sucre cdra. 2, Bellavista, Callao', 'En proceso', 'Diligencias', 'CF-2026-01500');
 
 -- Funcionarios policiales: reciben la misma contraseña (ya cifrada) del usuario PNP-2045
-INSERT INTO usuario (codigo, password_hash, nombres, apellidos, dni, institucion, rol, rango, dependencia, habilitado)
+INSERT INTO usuario (codigo, password_hash, nombres, apellidos, dni, rol, habilitado)
 SELECT f.codigo, (SELECT p.password_hash FROM (SELECT password_hash FROM usuario WHERE codigo = 'PNP-2045') p),
-       f.nombres, f.apellidos, f.dni, 'PNP', 'POLICIA', f.rango, 'Policía Nacional del Perú', TRUE
+       f.nombres, f.apellidos, f.dni, 'POLICIA', TRUE
 FROM imp_funcionario f
 WHERE NOT EXISTS (SELECT 1 FROM usuario u WHERE u.codigo = f.codigo);
+
+-- Datos propios del perfil policial (tabla POLICIA)
+INSERT INTO policia (id_usuario, rango, dependencia)
+SELECT u.id_usuario, f.rango, 'Policía Nacional del Perú'
+FROM usuario u
+JOIN imp_funcionario f ON f.codigo = u.codigo
+WHERE NOT EXISTS (SELECT 1 FROM policia p WHERE p.id_usuario = u.id_usuario);
 
 -- Módulos habilitados para esos funcionarios (los seis del sistema)
 INSERT INTO usuario_permiso (id_usuario, modulo)

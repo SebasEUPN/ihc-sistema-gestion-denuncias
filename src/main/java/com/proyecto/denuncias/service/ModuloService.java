@@ -42,23 +42,8 @@ public class ModuloService {
     /** Agenda del perfil (programación policial o diligencias fiscales). */
     @Transactional(readOnly = true)
     public List<ActividadProgramada> agenda(Rol rol) {
-        return actividadRepository.findByPerfilOrderByFechaHoraAsc(rol);
-    }
-
-    /** Historial de copias de seguridad. */
-    @Transactional(readOnly = true)
-    public List<CopiaSeguridad> copias() {
-        return copiaRepository.findAllByOrderByFechaHoraDescIdDesc();
-    }
-
-    /**
-     * Registra una copia de seguridad DEMOSTRATIVA: solo se anota la operación,
-     * no se genera un respaldo real de SQL Server.
-     */
-    @Transactional
-    public CopiaSeguridad generarCopia(String codigoAdmin) {
-        CopiaSeguridad copia = copiaRepository.save(new CopiaSeguridad(LocalDateTime.now(), 248, "Correcto", codigoAdmin));
-        auditoriaService.registrar(codigoAdmin, "Generó una copia de seguridad demostrativa", "Copias de seguridad");
-        return copia;
+        return rol == Rol.FISCAL
+                ? actividadRepository.findByIdFiscalIsNotNullOrderByFechaHoraAsc()
+                : actividadRepository.findByIdPoliciaIsNotNullOrderByFechaHoraAsc();
     }
 }

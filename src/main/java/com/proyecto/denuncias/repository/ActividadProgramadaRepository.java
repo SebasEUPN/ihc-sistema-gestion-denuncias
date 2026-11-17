@@ -10,9 +10,12 @@ import java.util.List;
 /** Acceso a la tabla "actividad_programada". */
 public interface ActividadProgramadaRepository extends JpaRepository<ActividadProgramada, Long> {
 
-    // Agenda de un perfil ordenada por fecha
-    List<ActividadProgramada> findByPerfilOrderByFechaHoraAsc(Rol perfil);
+    // Agenda policial (actividades con un policía responsable) ordenada por fecha
+    List<ActividadProgramada> findByIdPoliciaIsNotNullOrderByFechaHoraAsc();
 
-    // Cantidad de actividades de un perfil posteriores a una fecha (pendientes)
-    long countByPerfilAndFechaHoraAfter(Rol perfil, LocalDateTime fecha);
+    // Agenda fiscal (diligencias con un fiscal responsable) ordenada por fecha
+    List<ActividadProgramada> findByIdFiscalIsNotNullOrderByFechaHoraAsc();
+
+    // Cantidad de diligencias fiscales posteriores a una fecha (pendientes)
+    long countByIdFiscalIsNotNullAndFechaHoraAfter(LocalDateTime fecha);
 }

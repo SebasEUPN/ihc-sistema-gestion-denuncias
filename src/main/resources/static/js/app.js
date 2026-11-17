@@ -296,9 +296,7 @@ async function renderRoleModule(page) {
       const rows = (await API.get("/admin/auditoria")).map(r => [fechaHora(r.fechaHora), e(r.codigoUsuario), e(r.actividad), e(r.modulo), e(r.resultado)]);
       mount.innerHTML = shell("AUDITORÍA", "Registros de actividades", "Trazabilidad de las operaciones realizadas por los usuarios.", table(["Fecha y hora", "Usuario", "Actividad", "Módulo", "Resultado"], rows));
     } else if (page === "backup") {
-      const copias = await API.get("/admin/respaldos"), ultima = copias[0];
-      mount.innerHTML = shell("CONTINUIDAD OPERATIVA", "Copias de seguridad", "Estado de respaldos del sistema (simulación).", `<div class="stats-grid"><article class="stat-card"><div class="stat-top">Último respaldo</div><div class="stat-value" style="font-size:21px">${ultima ? fechaCorta(ultima.fechaHora) : "—"}</div><div class="stat-caption">${ultima ? ultima.fechaHora.slice(11, 16) + " h" : "Sin registros"}</div></article><article class="stat-card"><div class="stat-top">Estado</div><div class="stat-value" style="font-size:21px;color:#16865b">${ultima ? e(ultima.estado) : "—"}</div><div class="stat-caption">Proceso simulado</div></article><article class="stat-card"><div class="stat-top">Tamaño</div><div class="stat-value" style="font-size:21px">${ultima ? ultima.tamanoMb + " MB" : "—"}</div><div class="stat-caption">Datos de ejemplo</div></article><article class="stat-card"><div class="stat-top">Copias registradas</div><div class="stat-value" style="font-size:21px">${copias.length}</div><div class="stat-caption">Historial en la base de datos</div></article></div><div class="panel"><h3>Acciones de respaldo</h3><p class="muted">Se registra la operación en la base de datos; no se crea un archivo de respaldo real en este prototipo.</p><button class="primary-btn" id="demoBackupAction" type="button">Generar copia demostrativa</button></div>`);
-      mount.querySelector("#demoBackupAction").addEventListener("click", async () => { try { await API.post("/admin/respaldos"); toast("Copia demostrativa registrada correctamente."); renderRoleModule("backup"); } catch (error) { toast(error.message); } });
+      await renderCopias(mount);             // copias.js: crear, programar, historial y restaurar
     } else if (page === "tracking") {
       await renderActuaciones(mount);        // modulos.js: actuaciones con ventana de detalle
     } else if (page === "documents") {
@@ -721,14 +719,26 @@ $("#casePreview").addEventListener("click", e => { if (e.target === $("#casePrev
    Barra de accesibilidad (igual para los tres perfiles)
    --------------------------------------------------------------------- */
 
-// --- Color: vista normal -> paleta para daltonismo -> alto contraste -> modo oscuro ---
-const MODOS_COLOR = [{ id: "normal", nombre: "vista normal" }, { id: "colorblind", nombre: "paleta apta para daltonismo" }, { id: "contrast", nombre: "alto contraste" }, { id: "dark", nombre: "modo oscuro" }];
+// --- Color: cada clic pasa al siguiente modo. Los colores de cada uno están en styles.css ---
+// "corto" es el texto que se muestra en el botón para saber qué modo está activo.
+const MODOS_COLOR = [
+  { id: "normal", nombre: "vista normal", corto: "Color" },
+  { id: "colorblind", nombre: "paleta general para daltonismo", corto: "Daltonismo" },
+  { id: "protanopia", nombre: "protanopia (dificultad con el rojo)", corto: "Protanopia" },
+  { id: "deuteranopia", nombre: "deuteranopia (dificultad con el verde)", corto: "Deuteranopia" },
+  { id: "tritanopia", nombre: "tritanopia (dificultad con azul y amarillo)", corto: "Tritanopia" },
+  { id: "mono", nombre: "acromatopsia (escala de grises)", corto: "Grises" },
+  { id: "contrast", nombre: "alto contraste", corto: "Contraste" },
+  { id: "dark", nombre: "modo oscuro", corto: "Oscuro" }
+];
 function aplicarModoColor(id) {
   const modo = MODOS_COLOR.find(m => m.id === id) || MODOS_COLOR[0];
   // Los colores de cada modo están en styles.css, en las reglas body[data-color-mode="..."]
   if (modo.id === "normal") document.body.removeAttribute("data-color-mode"); else document.body.dataset.colorMode = modo.id;
   $("#colorMode").title = `Modo actual: ${modo.nombre}. Pulsa para cambiar.`;
   $("#colorMode").setAttribute("aria-label", `Cambiar colores: ${modo.nombre}`);
+  const etiqueta = $("#colorMode").querySelector("b");
+  if (etiqueta) etiqueta.textContent = modo.corto;
   // La preferencia se recuerda en el navegador (si este lo permite)
   try { localStorage.setItem("sgd-modo-color", modo.id); } catch (error) { /* almacenamiento no disponible */ }
 }

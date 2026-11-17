@@ -214,34 +214,34 @@ public class DatosIniciales implements CommandLineRunner {
                 new RemisionFiscal("D-000587", null, LocalDate.of(2026, 11, 5), null, "Pendiente")));
 
         disposicionRepository.saveAll(List.of(
-                new DisposicionFiscal("DISP-2026-0012", "CF-2026-00125", "Inicio de diligencias preliminares", LocalDate.of(2026, 11, 4), "Dra. Carla Mendoza", "Emitida"),
-                new DisposicionFiscal("DISP-2026-0013", "CF-2026-00126", "Ampliación de investigación", LocalDate.of(2026, 11, 5), "Dr. Miguel Salazar", "Emitida"),
-                new DisposicionFiscal("DISP-2026-0014", "CF-2026-00127", "Archivo preliminar", LocalDate.of(2026, 11, 6), "Dra. Patricia Rojas", "Notificada")));
+                new DisposicionFiscal("DISP-2026-0012", "CF-2026-00125", "Inicio de diligencias preliminares", LocalDate.of(2026, 11, 4), "Dra. Carla Mendoza", "Emitida").vincular(maria, carlos),
+                new DisposicionFiscal("DISP-2026-0013", "CF-2026-00126", "Ampliación de investigación", LocalDate.of(2026, 11, 5), "Dr. Miguel Salazar", "Emitida").vincular(maria, carlos),
+                new DisposicionFiscal("DISP-2026-0014", "CF-2026-00127", "Archivo preliminar", LocalDate.of(2026, 11, 6), "Dra. Patricia Rojas", "Notificada").vincular(maria, carlos)));
 
         // ---------------------------------------------------------------
         // 6. AGENDA: actividades policiales y diligencias fiscales
         // ---------------------------------------------------------------
         actividadRepository.saveAll(List.of(
-                new ActividadProgramada(Rol.POLICIA, "Entrevista al denunciante", "D-000584", "Comisaría Lima Centro", LocalDateTime.of(2026, 11, 10, 8, 0)),
-                new ActividadProgramada(Rol.POLICIA, "Verificación de cámaras", "D-000585", "Av. Arequipa", LocalDateTime.of(2026, 11, 12, 9, 30)),
-                new ActividadProgramada(Rol.POLICIA, "Inspección técnico policial", "D-000586", "San Isidro", LocalDateTime.of(2026, 11, 16, 10, 0)),
-                new ActividadProgramada(Rol.POLICIA, "Entrega de informe", "D-000588", "Fiscalía Provincial", LocalDateTime.of(2026, 11, 19, 15, 0)),
-                new ActividadProgramada(Rol.FISCAL, "Declaración testimonial", "CF-2026-00125", "Despacho fiscal 2", LocalDateTime.of(2026, 11, 11, 9, 0)),
-                new ActividadProgramada(Rol.FISCAL, "Inspección fiscal", "CF-2026-00126", "San Miguel", LocalDateTime.of(2026, 11, 13, 10, 30)),
-                new ActividadProgramada(Rol.FISCAL, "Audiencia de control", "CF-2026-00127", "Sala 3", LocalDateTime.of(2026, 11, 17, 8, 30)),
-                new ActividadProgramada(Rol.FISCAL, "Revisión de pericias", "CF-2026-00125", "Despacho fiscal 2", LocalDateTime.of(2026, 11, 20, 11, 0))));
+                new ActividadProgramada(carlos, "Entrevista al denunciante", "D-000584", "Comisaría Lima Centro", LocalDateTime.of(2026, 11, 10, 8, 0)),
+                new ActividadProgramada(carlos, "Verificación de cámaras", "D-000585", "Av. Arequipa", LocalDateTime.of(2026, 11, 12, 9, 30)),
+                new ActividadProgramada(carlos, "Inspección técnico policial", "D-000586", "San Isidro", LocalDateTime.of(2026, 11, 16, 10, 0)),
+                new ActividadProgramada(carlos, "Entrega de informe", "D-000588", "Fiscalía Provincial", LocalDateTime.of(2026, 11, 19, 15, 0)),
+                new ActividadProgramada(maria, "Declaración testimonial", "CF-2026-00125", "Despacho fiscal 2", LocalDateTime.of(2026, 11, 11, 9, 0)),
+                new ActividadProgramada(maria, "Inspección fiscal", "CF-2026-00126", "San Miguel", LocalDateTime.of(2026, 11, 13, 10, 30)),
+                new ActividadProgramada(maria, "Audiencia de control", "CF-2026-00127", "Sala 3", LocalDateTime.of(2026, 11, 17, 8, 30)),
+                new ActividadProgramada(maria, "Revisión de pericias", "CF-2026-00125", "Despacho fiscal 2", LocalDateTime.of(2026, 11, 20, 11, 0))));
 
         // ---------------------------------------------------------------
-        // 7. AUDITORÍA Y COPIA DE SEGURIDAD DE EJEMPLO
+        // 7. AUDITORÍA DE EJEMPLO
         // ---------------------------------------------------------------
         registroRepository.saveAll(List.of(
-                new RegistroActividad(LocalDateTime.of(2026, 11, 6, 15, 10), "ADM-0001", "Consultó reporte mensual", "Reportes", "Correcto"),
-                new RegistroActividad(LocalDateTime.of(2026, 11, 6, 16, 25), "PNP-2045", "Adjuntó documento a D-000584", "Documentos", "Correcto"),
-                new RegistroActividad(LocalDateTime.of(2026, 11, 7, 9, 12), "FN-1023", "Registró disposición fiscal", "Fiscalía", "Correcto"),
-                new RegistroActividad(LocalDateTime.of(2026, 11, 7, 9, 30), "PNP-2045", "Actualizó actuación D-000585", "Actuaciones", "Correcto"),
-                new RegistroActividad(LocalDateTime.of(2026, 11, 7, 9, 42), "ADM-0001", "Inicio de sesión del administrador", "Acceso", "Correcto")));
+                new RegistroActividad(LocalDateTime.of(2026, 11, 6, 15, 10), "ADM-0001", "Consultó reporte mensual", "Reportes", "Correcto").de(admin),
+                new RegistroActividad(LocalDateTime.of(2026, 11, 6, 16, 25), "PNP-2045", "Adjuntó documento a D-000584", "Documentos", "Correcto").de(carlos),
+                new RegistroActividad(LocalDateTime.of(2026, 11, 7, 9, 12), "FN-1023", "Registró disposición fiscal", "Fiscalía", "Correcto").de(maria),
+                new RegistroActividad(LocalDateTime.of(2026, 11, 7, 9, 30), "PNP-2045", "Actualizó actuación D-000585", "Actuaciones", "Correcto").de(carlos),
+                new RegistroActividad(LocalDateTime.of(2026, 11, 7, 9, 42), "ADM-0001", "Inicio de sesión del administrador", "Acceso", "Correcto").de(admin)));
 
-        copiaRepository.save(new CopiaSeguridad(LocalDateTime.of(2026, 11, 7, 2, 0), 248, "Correcto", "ADM-0001"));
+        // Las copias de seguridad no se siembran: el administrador las genera (son respaldos reales).
 
         // ---------------------------------------------------------------
         // 8. CONVERSACIONES DEL CHAT
@@ -303,7 +303,6 @@ public class DatosIniciales implements CommandLineRunner {
         u.setApellidos(apellidos);
         u.setDni(dni);
         u.setRol(rol);
-        u.setInstitucion(institucion);
         u.setRango(rango);
         u.setDependencia(dependencia);
         u.setTelefono(telefono);
