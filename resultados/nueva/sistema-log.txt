@@ -1,0 +1,40 @@
+ :: Spring Boot ::                (v3.5.7)
+
+2026-11-21T08:07:02.299-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : Starting SistemaDenunciasApplication v1.0.0 using Java 17.0.21 with PID 3141 (/home/runner/work/ihc-sistema-gestion-denuncias/ihc-sistema-gestion-denuncias/target/sistema-denuncias-1.0.0.jar started by runner in /home/runner/work/ihc-sistema-gestion-denuncias/ihc-sistema-gestion-denuncias)
+2026-11-21T08:07:02.302-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : No active profile set, falling back to 1 default profile: "default"
+2026-11-21T08:07:03.209-05:00  INFO 3141 --- [sistema-denuncias] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-21T08:07:03.298-05:00  INFO 3141 --- [sistema-denuncias] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 79 ms. Found 14 JPA repository interfaces.
+2026-11-21T08:07:03.958-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-11-21T08:07:04.004-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-21T08:07:04.004-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-11-21T08:07:04.035-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-11-21T08:07:04.037-05:00  INFO 3141 --- [sistema-denuncias] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1677 ms
+2026-11-21T08:07:04.161-05:00  WARN 3141 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariConfig           : HikariPool-1 - idleTimeout is close to or more than maxLifetime, disabling it.
+2026-11-21T08:07:04.162-05:00  INFO 3141 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-21T08:07:04.630-05:00  INFO 3141 --- [sistema-denuncias] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2eda4eeb
+2026-11-21T08:07:04.632-05:00  INFO 3141 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-21T08:07:04.776-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-11-21T08:07:04.831-05:00  INFO 3141 --- [sistema-denuncias] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.33.Final
+2026-11-21T08:07:04.870-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-11-21T08:07:05.237-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-21T08:07:05.354-05:00  INFO 3141 --- [sistema-denuncias] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.7
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-21T08:07:06.467-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-21T08:07:06.469-05:00  INFO 3141 --- [sistema-denuncias] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-21T08:07:06.806-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-21T08:07:08.064-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-11-21T08:07:08.357-05:00  INFO 3141 --- [sistema-denuncias] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-11-21T08:07:08.373-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : Started SistemaDenunciasApplication in 6.692 seconds (process running for 7.25)
+2026-11-21T08:07:08.961-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.denuncias.config.ImportacionExcel    : Importando las 500 denuncias del Excel...
+2026-11-21T08:07:09.075-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.denuncias.config.ImportacionExcel    : Importación terminada: 520 denuncias en total.
+2026-11-21T08:07:09.226-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.d.config.UsuariosAdicionales         : Usuarios de demostración adicionales creados: 27
+2026-11-21T08:07:09.271-05:00  INFO 3141 --- [sistema-denuncias] [           main] c.p.d.config.ActividadDemostracion       : Actividad de demostración registrada en 330 de 435 denuncias activas.
+2026-11-21T08:07:30.464-05:00  INFO 3141 --- [sistema-denuncias] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-21T08:07:30.465-05:00  INFO 3141 --- [sistema-denuncias] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-11-21T08:07:30.466-05:00  INFO 3141 --- [sistema-denuncias] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
