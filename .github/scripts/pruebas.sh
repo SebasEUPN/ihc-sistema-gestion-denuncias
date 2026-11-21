@@ -96,6 +96,42 @@ sleep 20
 igual "no se repite el mismo día" "$(SQL "select count(*) from copia_seguridad where origen='Automática'")" 1
 igual "historial" "$(curl -s -b /tmp/adm.txt $SD/api/admin/respaldos | jq -r '[.[]|select(.disponible)]|length')" 3
 
+
+echo "== 3b. Control de inactividad"
+login /tmp/adm.txt ADM-0001 admin >/dev/null
+igual "tablero (admin)" "$(curl -s -o /tmp/inact.json -w '%{http_code}' -b /tmp/adm.txt $SD/api/reportes/inactividad)" 200
+echo "  categorías: $(jq -c '[.categorias[]|{(.nombre):.cantidad}]|add' /tmp/inact.json)  activas=$(jq .activas /tmp/inact.json) porVencer=$(jq .porVencer /tmp/inact.json) promedio=$(jq .promedioDias /tmp/inact.json)"
+igual "suma de categorías = denuncias" "$(jq '[.categorias[].cantidad]|add' /tmp/inact.json)" "$(SQL "select count(*) from denuncia")"
+igual "las cuatro situaciones de alerta tienen denuncias" "$(jq '[.categorias[]|select(.nombre!="Concluida")|select(.cantidad>0)]|length' /tmp/inact.json)" 4
+igual "concluidas = resueltas o archivadas" "$(jq '.categorias[]|select(.nombre=="Concluida")|.cantidad' /tmp/inact.json)" "$(SQL "select count(*) from denuncia where estado_policial='Resuelto' or estado_fiscal='Archivado'")"
+igual "actividad de demostración aplicada una vez" "$(SQL "select count(distinct date(fecha_hora))>5 from seguimiento_denuncia where observacion like '%registro de demostración%'")" t
+igual "policía no ve el tablero" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/pnp.txt $SD/api/reportes/inactividad)" 403
+curl -s -b /tmp/adm.txt "$SD/api/reportes/denuncias?situacion=Cr%C3%ADtica" > /tmp/crit.json
+igual "filtro Crítica: todas entre 15 y 19 días" "$(jq '[.[]|select(.situacion!="Crítica" or .diasSinActividad<15 or .diasSinActividad>19)]|length' /tmp/crit.json)" 0
+igual "filtro Crítica: cantidad" "$(jq length /tmp/crit.json)" "$(jq '.categorias[]|select(.nombre=="Crítica")|.cantidad' /tmp/inact.json)"
+curl -s -b /tmp/adm.txt "$SD/api/reportes/denuncias?situacion=POR_VENCER" > /tmp/pv.json
+igual "por vencer: cantidad" "$(jq length /tmp/pv.json)" "$(jq .porVencer /tmp/inact.json)"
+igual "por vencer: ordenadas de más a menos días" "$(jq '[.[].diasSinActividad] == ([.[].diasSinActividad]|sort|reverse)' /tmp/pv.json)" true
+echo "  fila de ejemplo: $(jq -c '.[0]|{codigo,ultimaActividad,tipoActividad,diasSinActividad,situacion}' /tmp/pv.json)"
+igual "situación inválida rechazada" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/adm.txt "$SD/api/reportes/denuncias?situacion=XYZ")" 400
+igual "PDF con filtro de inactividad" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/adm.txt "$SD/api/reportes/denuncias/pdf?situacion=POR_VENCER")" 200
+igual "Excel con filtro de inactividad" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/adm.txt "$SD/api/reportes/denuncias/excel?situacion=POR_VENCER")" 200
+
+echo "-- Reinicio del contador"
+COD=$(jq -r '[.[]|select(.situacion=="Prioritaria")][0].codigo' /tmp/pv.json)
+ANTES=$(jq -r --arg c "$COD" '.[]|select(.codigo==$c)|.diasSinActividad' /tmp/pv.json)
+echo "  denuncia elegida: $COD ($ANTES días sin actividad)"
+login /tmp/pnp.txt PNP-2045 policia >/dev/null
+igual "cambio de estado SIN justificación rechazado" "$(curl -s -o /tmp/sj.json -w '%{http_code}' -b /tmp/pnp.txt -X PUT -H "$J" -d '{"estado":"En proceso","comentario":""}' $SD/api/denuncias/$COD)" 400
+cat /tmp/sj.json; echo
+igual "rechazo no reinicia el contador" "$(curl -s -b /tmp/adm.txt "$SD/api/reportes/denuncias?texto=$COD" | jq -r '.[0].diasSinActividad')" "$ANTES"
+igual "cambio de estado justificado" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/pnp.txt -X PUT -H "$J" -d '{"estado":"En proceso","comentario":"Se tomó la declaración de un testigo presencial."}' $SD/api/denuncias/$COD)" 200
+igual "contador reiniciado" "$(curl -s -b /tmp/adm.txt "$SD/api/reportes/denuncias?texto=$COD" | jq -r '.[0]|(.diasSinActividad|tostring)+"/"+.situacion+"/"+.tipoActividad')" "0/Normal/Actualización de estado"
+COD2=$(jq -r '[.[]|select(.situacion=="Prioritaria")][1].codigo' /tmp/pv.json)
+printf 'Acta de prueba' > /tmp/acta.txt
+igual "documento incorporado" "$(curl -s -o /tmp/doc.json -w '%{http_code}' -b /tmp/pnp.txt -F denuncia=$COD2 -F nombre='Acta de intervención' -F archivo=@/tmp/acta.txt $SD/api/documentos)" 200
+igual "documento reinicia el contador" "$(curl -s -b /tmp/adm.txt "$SD/api/reportes/denuncias?texto=$COD2" | jq -r '.[0]|(.diasSinActividad|tostring)+"/"+.tipoActividad')" "0/Documento o evidencia"
+
 echo "== 4. Portal ciudadano"
 curl -s -c /tmp/p.txt -H "$J" -d '{"codigo":"D-000584"}' $PC/api/portal/acceso/consulta >/dev/null
 igual "PIN del ciudadano" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/p.txt -c /tmp/p.txt -H "$J" -d '{"pin":"123456"}' $PC/api/portal/acceso/verificar)" 200

@@ -768,3 +768,98 @@ body[data-color-mode="mono"] .danger-btn{background:#1f1f1f;border-color:#000;co
 body[data-color-mode="mono"] .access-btn#colorMode{border-color:var(--blue);color:var(--blue)}
 /* En acromatopsia toda la página (imágenes y gráficos incluidos) pasa a escala de grises */
 html:has(body[data-color-mode="mono"]){filter:grayscale(1)}
+
+/* =====================================================================
+   Control de inactividad (reportes): etiquetas de situación, tarjetas,
+   distribución y barras por delito. Colores de la referencia:
+   Normal verde · Seguimiento durazno · Crítica rosa · Prioritaria rojo con borde.
+   El texto de la etiqueta siempre acompaña al color.
+   ===================================================================== */
+:root{--sit-normal:#2e9e68;--sit-seguimiento:#ef8a3c;--sit-critica:#e5484d;--sit-prioritaria:#a8160f}
+.sit-tag{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap;border:1px solid transparent;line-height:1.4}
+.sit-tag.normal{background:#dcf3e6;color:#11673f}
+.sit-tag.seguimiento{background:#fde6d6;color:#8f3f0b}
+.sit-tag.critica{background:#fde1e1;color:#a3191d}
+.sit-tag.prioritaria{background:#fff;color:#a8160f;border-color:#d92d20}
+.sit-tag.concluida{background:#edf0f3;color:#56657a}
+.inact-dias{font-weight:800;font-variant-numeric:tabular-nums}
+td.inact-dias,.mod-table td:has(> .inact-dias){text-align:right}
+.sit-legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:14px 2px 4px;font-size:11px;color:var(--muted)}
+.sit-legend span{display:inline-flex;align-items:center;gap:7px}
+.sit-note{font-size:10.5px;color:var(--muted);margin:6px 2px 0;line-height:1.5}
+.req-note{font-weight:500;color:var(--muted);font-size:.92em}
+
+.inact-panel{padding:22px}
+.inact-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.inact-head h2{margin:0 0 4px;font-size:18px}
+.inact-head .muted{margin:0}
+.inact-kpis{display:flex;gap:10px;flex-wrap:wrap}
+.inact-kpis div{border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:120px;background:var(--white)}
+.inact-kpis strong{display:block;font-size:22px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+.inact-kpis span{font-size:11px;color:var(--muted)}
+.inact-kpis .alerta{border-color:#f3b4b4;background:#fff5f5}
+.inact-kpis .alerta strong{color:#a3191d}
+.inact-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.inact-card{display:flex;flex-direction:column;gap:12px;text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--white);padding:14px 16px;cursor:pointer;font:inherit;color:var(--ink);transition:box-shadow .15s,border-color .15s}
+.inact-card:hover{box-shadow:0 4px 16px #1d3b5c14;border-color:#b9c7d6}
+.inact-card:focus-visible{outline:3px solid #7eb6ed;outline-offset:2px}
+.inact-card-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.inact-card-top b{font-size:14px}
+.inact-card-top small{flex-basis:100%;font-size:11px;color:var(--muted)}
+.inact-card-num{display:flex;align-items:baseline;gap:8px}
+.inact-card-num strong{font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.inact-card-num em{font-style:normal;font-size:11px;color:var(--muted)}
+.inact-meter{height:6px;border-radius:6px;background:#eef2f6;overflow:hidden}
+.inact-meter i{display:block;height:100%;border-radius:6px}
+.inact-card.normal .inact-meter i,.inact-dist i.normal,.inact-stack i.normal,.inact-stack-legend i.normal{background:var(--sit-normal)}
+.inact-card.seguimiento .inact-meter i,.inact-dist i.seguimiento,.inact-stack i.seguimiento,.inact-stack-legend i.seguimiento{background:var(--sit-seguimiento)}
+.inact-card.critica .inact-meter i,.inact-dist i.critica,.inact-stack i.critica,.inact-stack-legend i.critica{background:var(--sit-critica)}
+.inact-card.prioritaria .inact-meter i,.inact-dist i.prioritaria,.inact-stack i.prioritaria,.inact-stack-legend i.prioritaria{background:var(--sit-prioritaria)}
+.inact-card.prioritaria{border-color:#f0b2ae}
+.inact-dist{display:flex;height:12px;border-radius:8px;overflow:hidden;margin:16px 0 8px;background:#eef2f6;gap:2px}
+.inact-dist i{display:block;height:100%}
+.inact-foot{font-size:11px;color:var(--muted);margin:0}
+.inact-stack-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:var(--muted);margin:4px 0 12px}
+.inact-stack-legend span{display:inline-flex;align-items:center;gap:6px}
+.inact-stack-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.inact-stacks{display:grid;gap:9px}
+.inact-stack-row{display:grid;grid-template-columns:minmax(0,150px) 1fr 62px;align-items:center;gap:10px;font-size:11.5px}
+.inact-stack-row span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inact-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;background:#eef2f6;gap:1px}
+.inact-stack i{display:block;height:100%}
+.inact-stack-row b{text-align:right;font-variant-numeric:tabular-nums}
+.inact-stack-row b small{font-weight:400;color:var(--muted)}
+.inact-list-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.inact-list-head h3{margin:0}
+#inactividadDashboard{margin-bottom:22px}
+#inactividadDashboard .dash-grid{margin:18px 0}
+@media (max-width:1100px){.inact-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.inact-cards{grid-template-columns:1fr}.inact-kpis div{flex:1}}
+
+/* Modo oscuro */
+body[data-color-mode="dark"] .sit-tag.normal{background:#0f3a29;color:#7fe0b0}
+body[data-color-mode="dark"] .sit-tag.seguimiento{background:#3d2410;color:#ffbe8a}
+body[data-color-mode="dark"] .sit-tag.critica{background:#3a1715;color:#ff9c94}
+body[data-color-mode="dark"] .sit-tag.prioritaria{background:#151b23;color:#ff8a80;border-color:#ff6b61}
+body[data-color-mode="dark"] .sit-tag.concluida{background:#1c2632;color:#c2ccd6}
+body[data-color-mode="dark"] :is(.inact-card,.inact-kpis div){background:#151b23;border-color:#2f3a48}
+body[data-color-mode="dark"] .inact-kpis .alerta{background:#2a1413;border-color:#6b2a26}
+body[data-color-mode="dark"] .inact-kpis .alerta strong{color:#ff9c94}
+body[data-color-mode="dark"] :is(.inact-meter,.inact-dist,.inact-stack){background:#223041}
+body[data-color-mode="dark"]{--sit-prioritaria:#ff6b61;--sit-critica:#f0918c}
+/* Alto contraste */
+body[data-color-mode="contrast"] .sit-tag{border-color:currentColor}
+body[data-color-mode="contrast"] .inact-card{border:1.5px solid #000}
+/* Daltonismo: azul (normal), amarillo (seguimiento), naranja (crítica) y bermellón oscuro (prioritaria), paleta Okabe-Ito */
+body:is([data-color-mode="colorblind"],[data-color-mode="protanopia"],[data-color-mode="deuteranopia"]){--sit-normal:#0072b2;--sit-seguimiento:#e6b400;--sit-critica:#e69f00;--sit-prioritaria:#8a3b00}
+body:is([data-color-mode="colorblind"],[data-color-mode="protanopia"],[data-color-mode="deuteranopia"]) .sit-tag.normal{background:#dcefff;color:#00507f}
+body:is([data-color-mode="colorblind"],[data-color-mode="protanopia"],[data-color-mode="deuteranopia"]) .sit-tag.seguimiento{background:#fff6c7;color:#5c4a00}
+body:is([data-color-mode="colorblind"],[data-color-mode="protanopia"],[data-color-mode="deuteranopia"]) .sit-tag.critica{background:#ffe6bd;color:#7a4100}
+body:is([data-color-mode="colorblind"],[data-color-mode="protanopia"],[data-color-mode="deuteranopia"]) .sit-tag.prioritaria{background:#fff;color:#6b2e00;border-color:#8a3b00}
+body[data-color-mode="tritanopia"]{--sit-normal:#00666f;--sit-seguimiento:#7fb9bf;--sit-critica:#d9536b;--sit-prioritaria:#8c0f22}
+body[data-color-mode="tritanopia"] .sit-tag.normal{background:#d3f0f1;color:#00565e}
+body[data-color-mode="tritanopia"] .sit-tag.seguimiento{background:#e6f4f5;color:#244c50}
+body[data-color-mode="tritanopia"] .sit-tag.critica{background:#ffdce1;color:#8c0f22}
+body[data-color-mode="tritanopia"] .sit-tag.prioritaria{background:#fff;color:#8c0f22;border-color:#8c0f22}
+body[data-color-mode="mono"]{--sit-normal:#c9c9c9;--sit-seguimiento:#9a9a9a;--sit-critica:#5c5c5c;--sit-prioritaria:#111}
+body[data-color-mode="mono"] .sit-tag{border-color:currentColor}

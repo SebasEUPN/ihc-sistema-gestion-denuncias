@@ -75,7 +75,12 @@ public class DenunciaService {
     public DenunciaDTO actualizar(String codigo, ActualizarDenunciaRequest datos, Sesion.Datos sesion) {
         boolean esFiscal = sesion.rol() == Rol.FISCAL;
         String estado = Validar.texto(datos.estado(), "Estado", 30);
-        String comentario = Validar.opcional(datos.comentario(), "Comentarios", 1000);
+        // Todo cambio de estado debe justificarse: es una actuación válida y reinicia el contador de inactividad
+        String comentario = Validar.opcional(datos.comentario(), "Justificación", 1000);
+        if (comentario == null || comentario.length() < 10) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "Escribe la justificación de la actuación (al menos 10 caracteres) para registrar el cambio.");
+        }
 
         // Cada perfil solo puede usar los estados de su institución
         List<String> permitidos = esFiscal ? ESTADOS_FISCAL : ESTADOS_POLICIA;

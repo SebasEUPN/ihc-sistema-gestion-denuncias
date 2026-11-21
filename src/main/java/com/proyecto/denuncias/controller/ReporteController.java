@@ -1,6 +1,8 @@
 package com.proyecto.denuncias.controller;
 
+import com.proyecto.denuncias.dto.InactividadDTO;
 import com.proyecto.denuncias.dto.OpcionesReporteDTO;
+import com.proyecto.denuncias.model.Rol;
 import com.proyecto.denuncias.dto.ReporteFilaDTO;
 import com.proyecto.denuncias.security.Sesion;
 import com.proyecto.denuncias.service.AuditoriaService;
@@ -52,7 +54,15 @@ public class ReporteController {
         return reporteService.opciones();
     }
 
-    /** GET /api/reportes/denuncias?delito=&estadoPolicial=&estadoFiscal=&provincia=&distrito=&desde=&hasta=&texto= */
+    /** GET /api/reportes/inactividad — tablero de denuncias sin actividad (solo administrador). */
+    @GetMapping("/inactividad")
+    public InactividadDTO inactividad(HttpSession sesion) {
+        Sesion.exigirRol(sesion, Rol.ADMIN);
+        return reporteService.inactividad();
+    }
+
+    /** GET /api/reportes/denuncias?delito=&estadoPolicial=&estadoFiscal=&provincia=&distrito=&desde=&hasta=&texto=&situacion=
+     *  situacion: Normal, Seguimiento, Crítica, Prioritaria, Concluida o POR_VENCER (15 días o más). */
     @GetMapping("/denuncias")
     public List<ReporteFilaDTO> denuncias(
             @RequestParam(value = "delito", required = false) String delito,
@@ -63,9 +73,10 @@ public class ReporteController {
             @RequestParam(value = "desde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(value = "hasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "situacion", required = false) String situacion,
             HttpSession sesion) {
         usuarioConReportes(sesion);
-        return reporteService.filtrar(new ReporteService.Filtro(delito, estadoPolicial, estadoFiscal, provincia, distrito, desde, hasta, texto));
+        return reporteService.filtrar(new ReporteService.Filtro(delito, estadoPolicial, estadoFiscal, provincia, distrito, desde, hasta, texto, situacion));
     }
 
     /** GET /api/reportes/denuncias/pdf?... — el mismo reporte como archivo PDF. */
@@ -79,9 +90,10 @@ public class ReporteController {
             @RequestParam(value = "desde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(value = "hasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "situacion", required = false) String situacion,
             HttpSession sesion) {
         Sesion.Datos usuario = usuarioConReportes(sesion);
-        ReporteService.Filtro filtro = new ReporteService.Filtro(delito, estadoPolicial, estadoFiscal, provincia, distrito, desde, hasta, texto);
+        ReporteService.Filtro filtro = new ReporteService.Filtro(delito, estadoPolicial, estadoFiscal, provincia, distrito, desde, hasta, texto, situacion);
         List<ReporteFilaDTO> filas = reporteService.filtrar(filtro);
         byte[] archivo = reporteService.pdf(filas, filtro, funcionario(usuario));
         auditoriaService.registrar(usuario.codigo(), "Exportó a PDF un reporte de " + filas.size() + " denuncias", "Reportes");
@@ -99,9 +111,10 @@ public class ReporteController {
             @RequestParam(value = "desde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(value = "hasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "situacion", required = false) String situacion,
             HttpSession sesion) {
         Sesion.Datos usuario = usuarioConReportes(sesion);
-        ReporteService.Filtro filtro = new ReporteService.Filtro(delito, estadoPolicial, estadoFiscal, provincia, distrito, desde, hasta, texto);
+        ReporteService.Filtro filtro = new ReporteService.Filtro(delito, estadoPolicial, estadoFiscal, provincia, distrito, desde, hasta, texto, situacion);
         List<ReporteFilaDTO> filas = reporteService.filtrar(filtro);
         byte[] archivo = reporteService.excel(filas, filtro, funcionario(usuario));
         auditoriaService.registrar(usuario.codigo(), "Exportó a Excel un reporte de " + filas.size() + " denuncias", "Reportes");

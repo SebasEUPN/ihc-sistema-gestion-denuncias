@@ -422,19 +422,20 @@ async function renderDetail() {
     </section>
     <section class="panel police-update-panel"><h2>Actualizar atención policial</h2><p class="muted">Registra el avance de la denuncia y agrega observaciones al expediente.</p>
       <form id="updateForm"><div class="form-field"><label for="newStatus">Actualizar estado</label><select id="newStatus">${["En proceso", "Por resolver", "Resuelto"].map(status => `<option ${status === c.status ? "selected" : ""}>${status}</option>`).join("")}</select></div>
-      <div class="form-field"><label for="comments">Comentarios u observaciones</label><textarea id="comments" maxlength="1000" placeholder="Escribe una observación sobre las diligencias realizadas..."></textarea></div>
+      <div class="form-field"><label for="comments">Justificación de la actuación <span class="req-note">(obligatoria)</span></label><textarea id="comments" maxlength="1000" minlength="10" required placeholder="Describe la diligencia o el motivo del cambio de estado..."></textarea><small class="field-help">Registrar una actuación justificada reinicia el contador de días sin actividad de la denuncia.</small></div>
       <button class="primary-btn" type="submit">Guardar cambios</button></form>
     </section>
     <section class="panel police-update-panel">${historialHtml(c)}</section>`;
   } else {
     // Vista del fiscal (con formulario de disposición) y del administrador (solo lectura)
     const formulario = admin ? `<section class="panel"><h2>Consulta del administrador</h2><p class="muted">El administrador supervisa los expedientes en modo de solo lectura.</p>${historialHtml(c)}</section>`
-      : `<section class="panel"><h2>Registrar disposición fiscal</h2><p class="muted">Registra la actuación o disposición correspondiente.</p><form id="updateForm"><div class="form-field"><label for="newStatus">Tipo de disposición</label><select id="newStatus">${["En investigación", "Diligencias", "Con disposición", "Archivado"].map(s => `<option ${s === c.status ? "selected" : ""}>${s}</option>`).join("")}</select></div><div class="form-field"><label for="comments">Descripción de la disposición</label><textarea id="comments" maxlength="1000" placeholder="Escribe una observación..."></textarea></div><button class="primary-btn full" type="submit">Registrar disposición</button></form>${historialHtml(c)}</section>`;
+      : `<section class="panel"><h2>Registrar disposición fiscal</h2><p class="muted">Registra la actuación o disposición correspondiente.</p><form id="updateForm"><div class="form-field"><label for="newStatus">Tipo de disposición</label><select id="newStatus">${["En investigación", "Diligencias", "Con disposición", "Archivado"].map(s => `<option ${s === c.status ? "selected" : ""}>${s}</option>`).join("")}</select></div><div class="form-field"><label for="comments">Descripción de la disposición <span class="req-note">(obligatoria)</span></label><textarea id="comments" maxlength="1000" minlength="10" required placeholder="Describe la actuación o disposición fiscal..."></textarea><small class="field-help">Registrar una actuación justificada reinicia el contador de días sin actividad de la denuncia.</small></div><button class="primary-btn full" type="submit">Registrar disposición</button></form>${historialHtml(c)}</section>`;
     $("#detailContent").innerHTML = `<div class="detail-grid"><section class="panel"><div class="panel-heading"><div><h2>Detalle de denuncia — ${escapeHtml(c.id)}</h2><p class="muted">Información del expediente seleccionado</p></div>${statusTag(c.status)}</div><div class="detail-list"><span>Ciudadano</span><b>${escapeHtml(c.citizen)}</b></div><div class="detail-list"><span>Delito</span><b>${escapeHtml(c.crime)}</b></div><div class="detail-list"><span>Carpeta fiscal</span><b>${escapeHtml(c.carpetaFiscal || "Por asignar")}</b></div><div class="detail-list"><span>Fecha de registro</span><b>${escapeHtml(c.date)}</b></div><div class="detail-list"><span>Estado actual</span><b>${statusTag(c.status)}</b></div><h3>Descripción</h3><div class="description-box">${escapeHtml(c.description)}</div></section>${formulario}</div>`;
   }
   // Guardar: el backend cambia el estado y agrega el registro al historial
   $("#updateForm")?.addEventListener("submit", async e => {
     e.preventDefault();
+    if ($("#comments").value.trim().length < 10) { toast("Escribe la justificación de la actuación (al menos 10 caracteres)."); $("#comments").focus(); return; }
     try {
       await API.put("/denuncias/" + encodeURIComponent(c.id), { estado: $("#newStatus").value, comentario: $("#comments").value.trim() });
       toast(fiscal ? "Disposición registrada correctamente." : "Cambios guardados correctamente.");
@@ -452,7 +453,8 @@ function renderReports() {
   const esAdmin = state.role === "admin";
   $("#adminDashboard").classList.toggle("hidden", !esAdmin);
   $("#reportChartsTitle").classList.toggle("hidden", esAdmin); $("#reportChartsGrid").classList.toggle("hidden", esAdmin);
-  if (esAdmin) cargarEstadisticasAdmin();
+  $("#inactividadDashboard").classList.toggle("hidden", !esAdmin);
+  if (esAdmin) { cargarEstadisticasAdmin(); cargarInactividad(); }
   const cases = getCases(), total = cases.length;
   const resolved = cases.filter(c => ["Resuelto", "Archivado", "Con disposición"].includes(c.status)).length;
   const inProgress = cases.filter(c => ["En proceso", "En investigación", "Diligencias"].includes(c.status)).length;

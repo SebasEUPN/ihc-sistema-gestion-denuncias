@@ -6,7 +6,7 @@
   <meta name="description" content="Sistema de Gestión y Seguimiento de Denuncias PNP y Fiscalía">
   <title>Prototipo IHC (fines didácticos) · Sistema de gestión de denuncias</title>
   <!-- Hoja de estilos (src/main/resources/static/css/styles.css) -->
-  <link rel="stylesheet" href="css/styles.css?v=8">
+  <link rel="stylesheet" href="css/styles.css?v=9">
 </head>
 <body>
 <div role="note" style="background:#FFF4CC;color:#5c4400;border-bottom:1px solid #e0c96b;font:600 13px/1.4 system-ui,Segoe UI,Arial,sans-serif;text-align:center;padding:6px 12px">Prototipo académico IHC con fines didácticos (sistema de gestión de denuncias). No es un sitio oficial de la PNP ni del Ministerio Público; los datos son ficticios.</div>
@@ -222,6 +222,8 @@
       <section id="reportsPage" class="page hidden">
         <div class="welcome-row"><div><p class="eyebrow">ANÁLISIS OPERATIVO</p><h2>Reportes</h2><p class="muted">Resumen del desempeño y distribución de denuncias asignadas.</p></div><span class="date-pill">Datos de la base de datos</span></div>
         <!-- Tablero de estadísticas: solo lo ve el administrador (lo dibuja app.js con datos del backend) -->
+        <!-- Administrador: control de denuncias sin actividad (lo dibuja inactividad.js) -->
+        <div id="inactividadDashboard" class="hidden"></div>
         <div id="adminDashboard" class="hidden"></div>
         <div class="report-section-title" id="reportChartsTitle">Análisis operativos</div>
         <div class="report-chart-grid" id="reportChartsGrid">
@@ -249,6 +251,15 @@
               <div class="form-field"><label for="repTexto">Buscar</label><input id="repTexto" type="search" maxlength="80" placeholder="Código, ciudadano, DNI o carpeta"></div>
               <div class="form-field"><label for="repDesde">Fecha desde</label><input id="repDesde" type="date"></div>
               <div class="form-field"><label for="repHasta">Fecha hasta</label><input id="repHasta" type="date"></div>
+              <div class="form-field"><label for="repSituacion">Situación de inactividad</label><select id="repSituacion">
+                <option value="">Todas las situaciones</option>
+                <option value="POR_VENCER">Por vencer · 15 días o más sin actividad</option>
+                <option value="Normal">Normal · 0 a 7 días</option>
+                <option value="Seguimiento">Seguimiento · 8 a 14 días</option>
+                <option value="Crítica">Crítica · 15 a 19 días</option>
+                <option value="Prioritaria">Prioritaria · 20 días o más</option>
+                <option value="Concluida">Concluida · resuelta o archivada</option>
+              </select></div>
             </div>
             <div class="report-filter-actions"><button class="secondary-btn" type="reset">Limpiar filtros</button><button class="primary-btn" type="submit">Consultar</button></div>
           </form>
@@ -387,10 +398,11 @@
 
   <!-- Scripts (src/main/resources/static/js): el orden importa -->
   
-  <script src="js/icons.js?v=8"></script> <!-- 1. Iconos SVG -->
-  <script src="js/api.js?v=8"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
-  <script src="js/app.js?v=8"></script>   <!-- 3. Lógica de las pantallas -->
-  <script src="js/modulos.js?v=8"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
-  <script src="js/copias.js?v=8"></script>  <!-- 5. Copias de seguridad del administrador -->
+  <script src="js/icons.js?v=9"></script> <!-- 1. Iconos SVG -->
+  <script src="js/api.js?v=9"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
+  <script src="js/app.js?v=9"></script>   <!-- 3. Lógica de las pantallas -->
+  <script src="js/modulos.js?v=9"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
+  <script src="js/copias.js?v=9"></script>  <!-- 5. Copias de seguridad del administrador -->
+  <script src="js/inactividad.js?v=9"></script> <!-- 6. Control de denuncias sin actividad -->
 </body>
 </html>

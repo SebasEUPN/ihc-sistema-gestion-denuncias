@@ -2,7 +2,7 @@ package com.proyecto.denuncias.dto;
 
 import java.time.LocalDateTime;
 
-/** Fila del reporte de denuncias (consulta con filtros). */
+/** Fila del reporte de denuncias (consulta con filtros), con su inactividad. */
 public record ReporteFilaDTO(
         String codigo,
         LocalDateTime fechaRegistro,
@@ -16,6 +16,10 @@ public record ReporteFilaDTO(
         String estadoFiscal,
         String carpetaFiscal,
         String fiscalResponsable,
-        String descripcion
+        String descripcion,
+        LocalDateTime ultimaActividad,   // última actuación válida
+        String tipoActividad,            // qué fue: actuación, documento, informe...
+        long diasSinActividad,
+        String situacion                 // Normal, Seguimiento, Crítica, Prioritaria o Concluida
 ) {
 }

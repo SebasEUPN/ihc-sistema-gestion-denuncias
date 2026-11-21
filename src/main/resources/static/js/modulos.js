@@ -450,7 +450,7 @@ function llenarDistritos() {
 
 // Filtros del formulario en formato de URL: delito=Robo&provincia=Lima...
 function filtrosReporte() {
-  const valores = { delito: $("#repDelito").value, estadoPolicial: $("#repEstadoPnp").value, estadoFiscal: $("#repEstadoFiscal").value, provincia: $("#repProvincia").value, distrito: $("#repDistrito").value, desde: $("#repDesde").value, hasta: $("#repHasta").value, texto: $("#repTexto").value.trim() };
+  const valores = { delito: $("#repDelito").value, estadoPolicial: $("#repEstadoPnp").value, estadoFiscal: $("#repEstadoFiscal").value, provincia: $("#repProvincia").value, distrito: $("#repDistrito").value, desde: $("#repDesde").value, hasta: $("#repHasta").value, texto: $("#repTexto").value.trim(), situacion: $("#repSituacion").value };
   const params = new URLSearchParams();
   Object.entries(valores).forEach(([k, v]) => { if (v) params.set(k, v); });
   return params.toString();
@@ -469,8 +469,8 @@ async function consultarReporte() {
 
 // Texto con los filtros usados ("Delito: Robo · Provincia: Lima")
 function descripcionFiltros() {
-  const partes = [["Delito", "#repDelito"], ["Estado PNP", "#repEstadoPnp"], ["Estado Fiscalía", "#repEstadoFiscal"], ["Provincia", "#repProvincia"], ["Distrito", "#repDistrito"], ["Desde", "#repDesde"], ["Hasta", "#repHasta"], ["Texto", "#repTexto"]]
-    .filter(([, id]) => $(id).value.trim()).map(([n, id]) => `${n}: ${id === "#repDesde" || id === "#repHasta" ? fechaCorta($(id).value) : $(id).value.trim()}`);
+  const partes = [["Delito", "#repDelito"], ["Estado PNP", "#repEstadoPnp"], ["Estado Fiscalía", "#repEstadoFiscal"], ["Provincia", "#repProvincia"], ["Distrito", "#repDistrito"], ["Desde", "#repDesde"], ["Hasta", "#repHasta"], ["Texto", "#repTexto"], ["Inactividad", "#repSituacion"]]
+    .filter(([, id]) => $(id).value.trim()).map(([n, id]) => `${n}: ${id === "#repDesde" || id === "#repHasta" ? fechaCorta($(id).value) : id === "#repSituacion" ? $(id).selectedOptions[0].textContent : $(id).value.trim()}`);
   return partes.length ? partes.join(" · ") : "Todas las denuncias (sin filtros)";
 }
 
@@ -479,18 +479,31 @@ function dibujarReporte() {
   $("#reportResultSubtitle").textContent = descripcionFiltros();
   $("#reportResultCount").textContent = `${filas.length} denuncia(s) encontrada(s).`;
   ["#printReport", "#exportReportExcel", "#exportReportPdf"].forEach(id => $(id).disabled = filas.length === 0);
-  $("#reportResultRows").innerHTML = tablaModulo(["Código", "Fecha", "Tipo de delito", "Ciudadano", "Distrito", "Provincia", "Estado PNP", "Estado Fiscalía", "Carpeta fiscal", ""],
-    p.items.map(r => [`<b>${h(r.codigo)}</b>`, fechaCorta(r.fechaRegistro), h(r.tipoDelito), h(r.ciudadano), h(r.distrito), h(r.provincia), statusTag(r.estadoPolicial), statusTag(r.estadoFiscal), h(r.carpetaFiscal || "—"),
+  $("#reportResultRows").innerHTML = tablaModulo(["Código", "Fecha", "Última actividad", "Días sin actividad", "Situación", "Tipo de delito", "Ciudadano", "Ubicación", "Estado PNP", "Estado Fiscalía", "Carpeta fiscal", ""],
+    p.items.map(r => [`<b>${h(r.codigo)}</b>`, fechaCorta(r.fechaRegistro),
+      `${fechaCorta(r.ultimaActividad)}<small class="cell-sub">${h(r.tipoActividad)}</small>`, `<span class="inact-dias">${r.diasSinActividad}</span>`, situacionTag(r.situacion),
+      h(r.tipoDelito), h(r.ciudadano), `${h(r.distrito)}<small class="cell-sub">${h(r.provincia)}</small>`, statusTag(r.estadoPolicial), statusTag(r.estadoFiscal), h(r.carpetaFiscal || "—"),
       botonIcono(SIDEBAR_ICONS.eye, "Ver denuncia", `data-rep-ver="${h(r.codigo)}"`)]),
-    "No se encontraron denuncias con los filtros seleccionados.") + controlesPagina(p);
+    "No se encontraron denuncias con los filtros seleccionados.") + controlesPagina(p) + leyendaSituaciones();
 }
+
+// Etiqueta de la situación de inactividad (el color acompaña al texto, nunca lo reemplaza)
+const CLASE_SITUACION = { "Normal": "normal", "Seguimiento": "seguimiento", "Crítica": "critica", "Prioritaria": "prioritaria", "Concluida": "concluida" };
+const situacionTag = s => `<span class="sit-tag ${CLASE_SITUACION[s] || "concluida"}">${h(s)}</span>`;
+
+// Leyenda de las situaciones bajo la tabla de resultados
+const leyendaSituaciones = () => `<div class="sit-legend" aria-label="Significado de la situación de inactividad">
+  <span>${situacionTag("Normal")} 0 a 7 días · actividad reciente</span><span>${situacionTag("Seguimiento")} 8 a 14 días · próxima alerta</span>
+  <span>${situacionTag("Crítica")} 15 a 19 días · requiere revisión</span><span>${situacionTag("Prioritaria")} 20 días o más · inactividad prolongada</span>
+  <span>${situacionTag("Concluida")} resuelta o archivada · sin alerta</span></div>
+  <p class="sit-note">Días sin una actuación válida: cambio de estado justificado, actuación policial o fiscal, documento o evidencia, informe a la Fiscalía o disposición fiscal. Los cambios administrativos y los mensajes del chat no reinician el contador.</p>`;
 
 // Imprimir: abre una hoja con todas las filas del resultado y el diálogo de impresión
 function imprimirReporte() {
   const filas = estadoReporte.filas; if (!filas.length) return toast("No hay resultados para imprimir.");
   const ventana = window.open("", "_blank"); if (!ventana) return toast("Permite las ventanas emergentes para imprimir.");
-  const cuerpo = filas.map(r => `<tr><td>${h(r.codigo)}</td><td>${fechaCorta(r.fechaRegistro)}</td><td>${h(r.tipoDelito)}</td><td>${h(r.ciudadano)}</td><td>${h(r.distrito)}</td><td>${h(r.provincia)}</td><td>${h(r.estadoPolicial)}</td><td>${h(r.estadoFiscal)}</td><td>${h(r.carpetaFiscal || "—")}</td></tr>`).join("");
-  ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte de denuncias</title><style>body{font-family:Arial,sans-serif;color:#1d2938;padding:24px}h1{font-size:18px;color:#173b63;margin:0 0 4px}.sub{color:#65758a;font-size:11px}.meta{font-size:11px;line-height:1.7;margin:14px 0}table{width:100%;border-collapse:collapse;font-size:9.5px}th{background:#eaf1f8;text-align:left}th,td{border:1px solid #cbd5e1;padding:5px 6px}tr:nth-child(even) td{background:#f7f9fb}.foot{margin-top:18px;font-size:9px;color:#718096}@page{size:landscape;margin:12mm}</style></head><body><h1>REPORTE INSTITUCIONAL DE DENUNCIAS</h1><div class="sub">Sistema de Gestión y Seguimiento de Denuncias · PNP – Fiscalía</div><div class="meta"><b>Funcionario:</b> ${h(state.name)} (${h(state.code)})<br><b>Filtros:</b> ${h(descripcionFiltros())}<br><b>Fecha de emisión:</b> ${new Date().toLocaleString("es-PE")}<br><b>Total:</b> ${filas.length} denuncia(s)</div><table><thead><tr><th>Código</th><th>Fecha</th><th>Tipo de delito</th><th>Ciudadano</th><th>Distrito</th><th>Provincia</th><th>Estado PNP</th><th>Estado Fiscalía</th><th>Carpeta fiscal</th></tr></thead><tbody>${cuerpo}</tbody></table><div class="foot">Prototipo académico con datos ficticios.</div></body></html>`);
+  const cuerpo = filas.map(r => `<tr><td>${h(r.codigo)}</td><td>${fechaCorta(r.fechaRegistro)}</td><td>${fechaCorta(r.ultimaActividad)}</td><td>${r.diasSinActividad}</td><td>${h(r.situacion)}</td><td>${h(r.tipoDelito)}</td><td>${h(r.ciudadano)}</td><td>${h(r.distrito)}</td><td>${h(r.provincia)}</td><td>${h(r.estadoPolicial)}</td><td>${h(r.estadoFiscal)}</td><td>${h(r.carpetaFiscal || "—")}</td></tr>`).join("");
+  ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Reporte de denuncias</title><style>body{font-family:Arial,sans-serif;color:#1d2938;padding:24px}h1{font-size:18px;color:#173b63;margin:0 0 4px}.sub{color:#65758a;font-size:11px}.meta{font-size:11px;line-height:1.7;margin:14px 0}table{width:100%;border-collapse:collapse;font-size:9.5px}th{background:#eaf1f8;text-align:left}th,td{border:1px solid #cbd5e1;padding:5px 6px}tr:nth-child(even) td{background:#f7f9fb}.foot{margin-top:18px;font-size:9px;color:#718096}@page{size:landscape;margin:12mm}</style></head><body><h1>REPORTE INSTITUCIONAL DE DENUNCIAS</h1><div class="sub">Sistema de Gestión y Seguimiento de Denuncias · PNP – Fiscalía</div><div class="meta"><b>Funcionario:</b> ${h(state.name)} (${h(state.code)})<br><b>Filtros:</b> ${h(descripcionFiltros())}<br><b>Fecha de emisión:</b> ${new Date().toLocaleString("es-PE")}<br><b>Total:</b> ${filas.length} denuncia(s)</div><table><thead><tr><th>Código</th><th>Fecha</th><th>Última actividad</th><th>Días sin actividad</th><th>Situación</th><th>Tipo de delito</th><th>Ciudadano</th><th>Distrito</th><th>Provincia</th><th>Estado PNP</th><th>Estado Fiscalía</th><th>Carpeta fiscal</th></tr></thead><tbody>${cuerpo}</tbody></table><div class="foot">Prototipo académico con datos ficticios.</div></body></html>`);
   ventana.document.close(); ventana.onload = () => ventana.print();
 }
 
