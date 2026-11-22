@@ -1,11 +1,11 @@
 == 1. Estructura de la base (nueva)
 actividad_programada: id_actividad, id_policia, id_fiscal, nombre, referencia, lugar, fecha_hora
-admin: id_usuario, cargo, oficina
+admin: id_usuario, codigo, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, cargo, oficina
 configuracion_copia: id_configuracion, id_admin, activo, frecuencia, hora, dias_conservacion, fecha_actualizacion
 copia_seguridad: id_copia, id_admin, nombre, tipo, descripcion, origen, fecha_hora, tamano_bytes, registros, estado, archivo
 disposicion_fiscal: id_disposicion, numero, carpeta_fiscal, tipo, fecha, fiscal_responsable, estado, id_fiscal, id_policia
-fiscal: id_usuario, cargo, despacho
-policia: id_usuario, rango, dependencia
+fiscal: id_usuario, codigo, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, cargo, despacho
+policia: id_usuario, codigo, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, rango, dependencia
 registro_actividad: id_registro, fecha_hora, codigo_usuario, actividad, modulo, resultado, id_policia, id_fiscal, id_admin
 usuario: id_usuario, codigo, password_hash, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, rol, habilitado, foto, foto_tipo, ultimo_acceso, fecha_creacion
 -- Claves foráneas hacia policia, fiscal y admin:
@@ -41,6 +41,22 @@ registro_actividad -> policia  (fk_registro_policia)
   [OK] fila en policia del nuevo funcionario = Comisaría de Prueba
   [OK] deshabilitar funcionario = 200
   [OK] sigue con su fila en policia = 1
+-- Fichas completas en policia, fiscal y admin
+  policia: id_usuario, codigo, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, rango, dependencia
+  fiscal: id_usuario, codigo, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, cargo, despacho
+  admin: id_usuario, codigo, nombres, apellidos, dni, fecha_nacimiento, telefono, correo, direccion, contacto_emergencia, cargo, oficina
+  ejemplo policia: PNP-2045 | Carlos Mendoza Ruiz | 45821763 | 987654321 | cmendoza@pnp.gob.pe | Suboficial de Primera | Comisaría PNP San Isidro
+  ejemplo fiscal:  FN-1023 | María Fernanda Salas | Fiscal Provincial | Segunda Fiscalía Provincial Penal
+  ejemplo admin:   ADM-0005 | Hernán Villanueva Rojas | Administrador de soporte a usuarios | Mesa de Ayuda y Soporte Técnico
+  [OK] policia: solo códigos PNP y todos con datos = 74
+  [OK] fiscal: solo códigos FN y todos con datos = 25
+  [OK] admin: solo códigos ADM y todos con datos = 5
+  [OK] usuario sigue teniendo a todos (= policia + fiscal + admin) = 104
+  [OK] fichas distintas de usuario = 0
+  [OK] funcionario creado desde la app tiene ficha completa = PNP-9001 | Prueba Automática | 70000001 | 999888777 | prueba@pnp.gob.pe | 1990-05-10
+  [OK] cambio en usuario llega a la ficha = 911222333 nuevo@mpfn.gob.pe
+  [OK] la ficha no puede tener otro nombre que usuario = María Fernanda
+  [OK] trigger de sincronización instalado = tr_usuario_datos_ficha
   [OK] auditoría = 200
   [OK] último registro enlazado con admin = t
   [OK] estadísticas del administrador = 200
@@ -62,7 +78,7 @@ registro_actividad -> policia  (fk_registro_policia)
 == 3. Copias de seguridad
   [OK] configuración inicial = false/DIARIA/02:00/30
   [OK] crear copia completa = 200
-{"id":1,"nombre":"Backup_Prueba_001","tipo":"COMPLETA","tipoNombre":"Completa","descripcion":"Copia de la prueba automática","origen":"Manual","fechaHora":"2026-11-22T14:48:58.280583","tamanoBytes":75222,"registros":2663,"estado":"Completada","administrador":"ADM-0001 · Administrador Principal","disponible":true}
+{"id":1,"nombre":"Backup_Prueba_001","tipo":"COMPLETA","tipoNombre":"Completa","descripcion":"Copia de la prueba automática","origen":"Manual","fechaHora":"2026-11-22T15:44:13.037013","tamanoBytes":76960,"registros":2663,"estado":"Completada","administrador":"ADM-0001 · Administrador Principal","disponible":true}
   [OK] estado de la copia = Completada/true/ADM-0001 · Administrador Principal
   [OK] nombre repetido rechazado = 409
   [OK] tipo inválido rechazado = 400
@@ -80,10 +96,11 @@ registro_actividad -> policia  (fk_registro_policia)
   [OK] actividad borrada restaurada = 8
   [OK] rango restaurado = Suboficial de Primera
   [OK] funcionario creado después de la copia se conserva... (PNP-9001 es anterior) = 1
+  [OK] fichas completas tras restaurar = 0
   [OK] login sigue funcionando tras restaurar = 200
 -- Copias automáticas
   [OK] guardar configuración = 200
-{"activo":true,"frecuencia":"DIARIA","hora":"00:00","diasConservacion":30,"actualizadoPor":"ADM-0001 · Administrador Principal","fechaActualizacion":"2026-11-22T14:49:01.394312","ultimaAutomatica":null}
+{"activo":true,"frecuencia":"DIARIA","hora":"00:00","diasConservacion":30,"actualizadoPor":"ADM-0001 · Administrador Principal","fechaActualizacion":"2026-11-22T15:44:15.940342","ultimaAutomatica":null}
   [OK] hora inválida rechazada = 400
   [OK] copia automática generada = 1/Completada
   [OK] no se repite el mismo día = 1
