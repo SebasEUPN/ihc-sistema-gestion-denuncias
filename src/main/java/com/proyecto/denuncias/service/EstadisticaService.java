@@ -155,9 +155,13 @@ public class EstadisticaService {
             Map<String, Long> estados = porResponsable.getOrDefault(u.getId(), Map.of());
             long asignadas = estados.values().stream().mapToLong(Long::longValue).sum();
             long resueltas = estados.getOrDefault("Resuelto", 0L);
+            long enProceso = estados.getOrDefault("En proceso", 0L);
+            long porResolver = estados.getOrDefault("Por resolver", 0L);
+            // Denuncias con otro estado policial heredado de los datos (por ejemplo "Archivado")
+            long otros = asignadas - enProceso - porResolver - resueltas;
             filas.add(new FilaPolicia(u.getCodigo(), u.getNombreCompleto(), asignadas,
-                    estados.getOrDefault("En proceso", 0L), estados.getOrDefault("Por resolver", 0L),
-                    resueltas, porcentaje(resueltas, asignadas), idsEnLinea.contains(u.getId())));
+                    enProceso, porResolver, resueltas, otros,
+                    porcentaje(resueltas, asignadas), idsEnLinea.contains(u.getId())));
         }
         // Primero los que tienen más denuncias asignadas
         filas.sort(Comparator.comparingLong(FilaPolicia::asignadas).reversed());

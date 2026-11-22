@@ -45,6 +45,12 @@ igual "sigue con su fila en policia" "$(SQL "select count(*) from policia p join
 igual "auditoría" "$(curl -s -o /tmp/aud.json -w '%{http_code}' -b /tmp/adm.txt $SD/api/admin/auditoria)" 200
 igual "último registro enlazado con admin" "$(SQL "select (id_admin is not null) from registro_actividad where codigo_usuario='ADM-0001' order by id_registro desc limit 1")" t
 igual "estadísticas del administrador" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/adm.txt $SD/api/admin/estadisticas)" 200
+echo "-- Avance de casos por policía"
+curl -s -b /tmp/adm.txt $SD/api/admin/estadisticas > /tmp/est.json
+echo "  policías: $(jq '.policias|length' /tmp/est.json) · con casos: $(jq '[.policias[]|select(.asignadas>0)]|length' /tmp/est.json) · ejemplo: $(jq -c '.policias[0]|{codigo,asignadas,resueltas,enProceso,porResolver,otros,porcentajeResolucion}' /tmp/est.json)"
+igual "cada policía: resueltas+en proceso+por resolver+otros = asignadas" "$(jq '[.policias[]|select(.resueltas+.enProceso+.porResolver+.otros != .asignadas)]|length' /tmp/est.json)" 0
+igual "ningún tramo negativo" "$(jq '[.policias[]|select(.otros<0)]|length' /tmp/est.json)" 0
+igual "total de casos de policías = denuncias con responsable" "$(jq '[.policias[].asignadas]|add' /tmp/est.json)" "$(SQL "select count(*) from denuncia d join policia p on p.id_usuario=d.id_usuario_responsable")"
 
 igual "login policía" "$(login /tmp/pnp.txt PNP-2045 policia)" 200
 igual "agenda policial" "$(curl -s -b /tmp/pnp.txt $SD/api/agenda | jq -r 'length|tostring' )/$(curl -s -b /tmp/pnp.txt $SD/api/agenda | jq -r '.[0].perfil')" "4/POLICIA"

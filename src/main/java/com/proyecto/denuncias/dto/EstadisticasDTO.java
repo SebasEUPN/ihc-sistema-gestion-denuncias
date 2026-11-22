@@ -48,7 +48,7 @@ public record EstadisticasDTO(
 
     /** Denuncias a cargo de un funcionario policial, separadas por estado. */
     public record FilaPolicia(String codigo, String nombre, long asignadas, long enProceso,
-                              long porResolver, long resueltas, double porcentajeResolucion, boolean enLinea) {
+                              long porResolver, long resueltas, long otros, double porcentajeResolucion, boolean enLinea) {
     }
 
     /** Carpetas a cargo de un fiscal responsable, separadas por estado. */

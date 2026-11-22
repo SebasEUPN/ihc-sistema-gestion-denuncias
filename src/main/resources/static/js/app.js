@@ -867,6 +867,7 @@ async function cargarEstadisticasAdmin() {
       <section class="panel dash-card"><h3>Denuncias por tipo de delito</h3><p class="muted">${e.porDelito.length} tipos registrados</p><div class="dash-hbars">${barras(e.porDelito)}</div></section>
       <section class="panel dash-card"><h3>Trabajo registrado</h3><p class="muted">Actuaciones, documentos y remisiones por estado</p><div class="dash-minis">${lista("Actuaciones policiales", e.actuacionesPoliciales)}${lista("Actuaciones fiscales", e.actuacionesFiscales)}${lista("Documentos y evidencias", e.documentos)}${lista("Remisiones a Fiscalía", e.remisiones)}</div></section>
     </div>
+    ${htmlAvance(e)}
     <section class="panel dash-card"><h3>Desempeño de funcionarios policiales</h3><p class="muted">${e.policias.length} funcionarios · denuncias a su cargo según el estado policial</p>${tabla(["Código", "Funcionario", "Asignadas", "En proceso", "Por resolver", "Resueltas", "Resolución"], filasPolicia)}</section>
     <div class="dash-grid two">
       <section class="panel dash-card"><h3>Carga de fiscales responsables</h3><p class="muted">${e.fiscales.length} fiscales · carpetas según el estado fiscal</p>${tabla(["Fiscal", "Carpetas", "En investigación", "Diligencias", "Con disposición", "Archivadas"], filasFiscal)}</section>
@@ -876,5 +877,7 @@ async function cargarEstadisticasAdmin() {
 
 // El tablero se vuelve a consultar cada 30 segundos mientras el administrador lo tiene abierto
 setInterval(() => {
-  if (state.user && state.role === "admin" && state.page === "reports" && !document.hidden) cargarEstadisticasAdmin();
+  // No se refresca mientras el administrador escribe en la búsqueda del gráfico de avance
+  const escribiendo = document.activeElement && document.activeElement.closest && document.activeElement.closest("#avanceMount");
+  if (state.user && state.role === "admin" && state.page === "reports" && !document.hidden && !escribiendo) cargarEstadisticasAdmin();
 }, 30000);
