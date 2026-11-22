@@ -21,7 +21,7 @@ const TRAMOS_FISCAL = [
 ];
 
 // Lo que elige el administrador se conserva aunque el tablero se refresque cada 30 segundos
-const vistaAvance = { orden: "asignadas", buscar: "", verTodos: false, ordenFiscal: "carpetas" };
+const vistaAvance = { orden: "asignadas", buscar: "", verTodos: false, ordenFiscal: "carpetas", buscarFiscal: "", verTodosFiscal: false };
 let datosAvance = null;
 
 const pct = (n, total) => total ? Math.round(n / total * 1000) / 10 : 0;
@@ -96,26 +96,31 @@ function htmlAvanceFiscales(e) {
   const total = todos.reduce((s, f) => s + f.carpetas, 0);
   const totales = sumar(todos, TRAMOS_FISCAL);
   const decididas = f => (f.conDisposicion || 0) + (f.archivadas || 0);
-  const filas = [...todos].sort(vistaAvance.ordenFiscal === "decision"
-    ? (a, b) => pct(decididas(b), b.carpetas) - pct(decididas(a), a.carpetas)
+  const q = vistaAvance.buscarFiscal.trim().toLowerCase();
+  const filas = todos.filter(f => !q || f.nombre.toLowerCase().includes(q)).sort(vistaAvance.ordenFiscal === "decision"
+    ? (a, b) => pct(decididas(b), b.carpetas) - pct(decididas(a), a.carpetas) || b.carpetas - a.carpetas
     : (a, b) => b.carpetas - a.carpetas);
+  const limite = 12, visibles = vistaAvance.verTodosFiscal || q ? filas : filas.slice(0, limite);
+  const boton = !q && filas.length > limite
+    ? `<button type="button" class="outline-btn av-more" data-av="ver-todos-fiscal">${vistaAvance.verTodosFiscal ? "Mostrar solo los primeros " + limite : "Ver los " + filas.length + " fiscales"}</button>` : "";
   const opcion = (v, t) => `<option value="${v}" ${vistaAvance.ordenFiscal === v ? "selected" : ""}>${t}</option>`;
-  const filasHtml = filas.map(f => `
+  const filasHtml = visibles.map(f => `
     <div class="av-row">
       <div class="av-who"><b>${h(f.nombre)}</b></div>
       ${barraApilada(f, TRAMOS_FISCAL, f.carpetas)}
       <div class="av-num"><b>${f.carpetas}</b><small>carpetas</small></div>
       <div class="av-num ok"><b>${pct(decididas(f), f.carpetas)}%</b><small>con decisión</small></div>
-    </div>`).join("") || '<p class="muted">Sin carpetas fiscales.</p>';
+    </div>`).join("") || '<p class="muted">Ningún fiscal coincide con la búsqueda.</p>';
   return `
     <section class="panel dash-card av-card" id="avanceFiscales">
       <div class="av-head">
         <div><h3>Avance de carpetas por fiscal responsable</h3>
-          <p class="muted">Porcentaje de carpetas de cada fiscal según su estado fiscal · ${total} carpetas</p></div>
-        <div class="av-tools"><label>Ordenar por<select data-av="orden-fiscal">${opcion("carpetas", "Más carpetas")}${opcion("decision", "Mayor % con decisión")}</select></label></div>
+          <p class="muted">Porcentaje de carpetas de cada fiscal según su estado fiscal · ${todos.length} fiscales · ${total} carpetas</p></div>
+        <div class="av-tools"><label>Buscar<input type="search" data-av="buscar-fiscal" placeholder="Nombre del fiscal" value="${h(vistaAvance.buscarFiscal)}"></label><label>Ordenar por<select data-av="orden-fiscal">${opcion("carpetas", "Más carpetas")}${opcion("decision", "Mayor % con decisión")}</select></label></div>
       </div>
       ${leyendaAvance(TRAMOS_FISCAL, totales, total)}
       <div class="av-rows">${filasHtml}</div>
+      ${boton}
     </section>`;
 }
 
@@ -125,33 +130,32 @@ function htmlAvance(e) {
   return `<div id="avanceMount">${htmlAvancePolicias(e)}${htmlAvanceFiscales(e)}</div>`;
 }
 
-function redibujarPolicias() {
-  const sec = document.getElementById("avancePolicias");
-  if (sec && datosAvance) sec.outerHTML = htmlAvancePolicias(datosAvance);
+function redibujar(id) {
+  const sec = document.getElementById(id);
+  if (sec && datosAvance) sec.outerHTML = id === "avancePolicias" ? htmlAvancePolicias(datosAvance) : htmlAvanceFiscales(datosAvance);
 }
 
+// Búsqueda: se redibuja el gráfico y se devuelve el cursor al campo
 document.addEventListener("input", ev => {
-  const el = ev.target.closest && ev.target.closest('[data-av="buscar"]');
-  if (!el) return;
-  vistaAvance.buscar = el.value;
+  const el = ev.target;
+  if (!el.matches || !el.matches('[data-av="buscar"],[data-av="buscar-fiscal"]')) return;
+  const fiscal = el.dataset.av === "buscar-fiscal";
+  if (fiscal) vistaAvance.buscarFiscal = el.value; else vistaAvance.buscar = el.value;
   const pos = el.selectionStart;
-  redibujarPolicias();
-  const nuevo = document.querySelector('[data-av="buscar"]');
+  redibujar(fiscal ? "avanceFiscales" : "avancePolicias");
+  const nuevo = document.querySelector(`[data-av="${el.dataset.av}"]`);
   if (nuevo) { nuevo.focus(); try { nuevo.setSelectionRange(pos, pos); } catch (_) { } }
 });
 
 document.addEventListener("change", ev => {
   const el = ev.target;
-  if (el.matches && el.matches('[data-av="orden"]')) { vistaAvance.orden = el.value; redibujarPolicias(); }
-  if (el.matches && el.matches('[data-av="orden-fiscal"]') && datosAvance) {
-    vistaAvance.ordenFiscal = el.value;
-    document.getElementById("avanceFiscales").outerHTML = htmlAvanceFiscales(datosAvance);
-  }
+  if (el.matches && el.matches('[data-av="orden"]')) { vistaAvance.orden = el.value; redibujar("avancePolicias"); }
+  if (el.matches && el.matches('[data-av="orden-fiscal"]')) { vistaAvance.ordenFiscal = el.value; redibujar("avanceFiscales"); }
 });
 
 document.addEventListener("click", ev => {
-  const b = ev.target.closest && ev.target.closest('[data-av="ver-todos"]');
+  const b = ev.target.closest && ev.target.closest('[data-av="ver-todos"],[data-av="ver-todos-fiscal"]');
   if (!b) return;
-  vistaAvance.verTodos = !vistaAvance.verTodos;
-  redibujarPolicias();
+  if (b.dataset.av === "ver-todos") { vistaAvance.verTodos = !vistaAvance.verTodos; redibujar("avancePolicias"); }
+  else { vistaAvance.verTodosFiscal = !vistaAvance.verTodosFiscal; redibujar("avanceFiscales"); }
 });
