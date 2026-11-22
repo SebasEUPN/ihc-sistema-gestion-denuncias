@@ -42,6 +42,23 @@ cat /tmp/nuevo.json | head -c 300; echo
 igual "fila en policia del nuevo funcionario" "$(SQL "select p.dependencia from policia p join usuario u on u.id_usuario=p.id_usuario where u.codigo='PNP-9001'")" "Comisaría de Prueba"
 igual "deshabilitar funcionario" "$(curl -s -o /tmp/e.json -w '%{http_code}' -b /tmp/adm.txt -X PATCH -H "$J" -d '{"habilitado":false}' $SD/api/usuarios/PNP-9001/estado)" 200
 igual "sigue con su fila en policia" "$(SQL "select count(*) from policia p join usuario u on u.id_usuario=p.id_usuario where u.codigo='PNP-9001' and not u.habilitado")" 1
+echo "-- Fichas completas en policia, fiscal y admin"
+for t in policia fiscal admin; do echo "  $t: $(SQL "select string_agg(column_name, ', ' order by ordinal_position) from information_schema.columns where table_schema='public' and table_name='$t'")"; done
+echo "  ejemplo policia: $(SQL "select codigo||' | '||nombres||' '||apellidos||' | '||dni||' | '||coalesce(telefono,'-')||' | '||coalesce(correo,'-')||' | '||rango||' | '||dependencia from policia where codigo='PNP-2045'")"
+echo "  ejemplo fiscal:  $(SQL "select codigo||' | '||nombres||' '||apellidos||' | '||cargo||' | '||despacho from fiscal where codigo='FN-1023'")"
+echo "  ejemplo admin:   $(SQL "select codigo||' | '||nombres||' '||apellidos||' | '||cargo||' | '||oficina from admin where codigo='ADM-0005'")"
+igual "policia: solo códigos PNP y todos con datos" "$(SQL "select count(*) from policia where codigo like 'PNP-%' and nombres is not null and dni is not null")" "$(SQL "select count(*) from policia")"
+igual "fiscal: solo códigos FN y todos con datos" "$(SQL "select count(*) from fiscal where codigo like 'FN-%' and nombres is not null and dni is not null")" "$(SQL "select count(*) from fiscal")"
+igual "admin: solo códigos ADM y todos con datos" "$(SQL "select count(*) from admin where codigo like 'ADM-%' and nombres is not null and dni is not null")" "$(SQL "select count(*) from admin")"
+igual "usuario sigue teniendo a todos (= policia + fiscal + admin)" "$(SQL "select count(*) from usuario")" "$(SQL "select (select count(*) from policia)+(select count(*) from fiscal)+(select count(*) from admin)")"
+igual "fichas distintas de usuario" "$(SQL "select count(*) from (select id_usuario,codigo,nombres,apellidos,dni,fecha_nacimiento,telefono,correo,direccion,contacto_emergencia from policia union all select id_usuario,codigo,nombres,apellidos,dni,fecha_nacimiento,telefono,correo,direccion,contacto_emergencia from fiscal union all select id_usuario,codigo,nombres,apellidos,dni,fecha_nacimiento,telefono,correo,direccion,contacto_emergencia from admin) f join usuario u using (id_usuario) where (f.codigo,f.nombres,f.apellidos,f.dni,f.fecha_nacimiento,f.telefono,f.correo,f.direccion,f.contacto_emergencia) is distinct from (u.codigo,u.nombres,u.apellidos,u.dni,u.fecha_nacimiento,u.telefono,u.correo,u.direccion,u.contacto_emergencia)")" 0
+igual "funcionario creado desde la app tiene ficha completa" "$(SQL "select codigo||' | '||nombres||' '||apellidos||' | '||dni||' | '||telefono||' | '||correo||' | '||fecha_nacimiento from policia where codigo='PNP-9001'")" "PNP-9001 | Prueba Automática | 70000001 | 999888777 | prueba@pnp.gob.pe | 1990-05-10"
+SQL "update usuario set telefono='911222333', correo='nuevo@mpfn.gob.pe' where codigo='FN-1023'" >/dev/null
+igual "cambio en usuario llega a la ficha" "$(SQL "select telefono||' '||correo from fiscal where codigo='FN-1023'")" "911222333 nuevo@mpfn.gob.pe"
+SQL "update fiscal set nombres='MANIPULADO', cargo='Fiscal Provincial' where codigo='FN-1023'" >/dev/null
+igual "la ficha no puede tener otro nombre que usuario" "$(SQL "select nombres from fiscal where codigo='FN-1023'")" "$(SQL "select nombres from usuario where codigo='FN-1023'")"
+SQL "update usuario set telefono='986321457', correo='msalas@mpfn.gob.pe' where codigo='FN-1023'" >/dev/null
+igual "trigger de sincronización instalado" "$(SQL "select tgname from pg_trigger where tgname='tr_usuario_datos_ficha'")" "tr_usuario_datos_ficha"
 igual "auditoría" "$(curl -s -o /tmp/aud.json -w '%{http_code}' -b /tmp/adm.txt $SD/api/admin/auditoria)" 200
 igual "último registro enlazado con admin" "$(SQL "select (id_admin is not null) from registro_actividad where codigo_usuario='ADM-0001' order by id_registro desc limit 1")" t
 igual "estadísticas del administrador" "$(curl -s -o /dev/null -w '%{http_code}' -b /tmp/adm.txt $SD/api/admin/estadisticas)" 200
@@ -90,6 +107,7 @@ igual "permisos restaurados" "$(SQL "select count(*) from usuario_permiso where 
 igual "actividad borrada restaurada" "$(SQL "select count(*) from actividad_programada")" 8
 igual "rango restaurado" "$(SQL "select rango from policia where id_usuario=(select id_usuario from usuario where codigo='PNP-2045')")" "Suboficial de Primera"
 igual "funcionario creado después de la copia se conserva... (PNP-9001 es anterior)" "$(SQL "select count(*) from usuario where codigo='PNP-9001'")" 1
+igual "fichas completas tras restaurar" "$(SQL "select count(*) from policia p join usuario u using (id_usuario) where p.codigo is distinct from u.codigo or p.nombres is distinct from u.nombres")" 0
 igual "login sigue funcionando tras restaurar" "$(login /tmp/pnp.txt PNP-2045 policia)" 200
 
 echo "-- Copias automáticas"

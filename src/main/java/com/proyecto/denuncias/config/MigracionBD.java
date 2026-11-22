@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
  *  3. "copia_seguridad" se relaciona con "admin".
  *  4. "actividad_programada", "registro_actividad" y "disposicion_fiscal"
  *     se relacionan con "policia" y "fiscal" (y la auditoría también con "admin").
+ *  5. "policia", "fiscal" y "admin" guardan también los datos personales del
+ *     funcionario (copia de "usuario", sincronizada por triggers).
  */
 @Component
 @Order(0)
@@ -50,6 +52,75 @@ public class MigracionBD implements CommandLineRunner {
         relacionarActividades();
         relacionarAuditoria();
         relacionarDisposiciones();
+        completarFichas();
+    }
+
+    // Datos personales que cada ficha (policia, fiscal, admin) copia de usuario.
+    // La contraseña, el rol y los datos de la cuenta se quedan solo en usuario.
+    private static final String[][] DATOS_PERSONALES = {
+        {"codigo", "VARCHAR(20)"}, {"nombres", "VARCHAR(80)"}, {"apellidos", "VARCHAR(80)"},
+        {"dni", "VARCHAR(8)"}, {"fecha_nacimiento", "DATE"}, {"telefono", "VARCHAR(15)"},
+        {"correo", "VARCHAR(120)"}, {"direccion", "VARCHAR(150)"}, {"contacto_emergencia", "VARCHAR(15)"}};
+    private static final String[] FICHAS = {"policia", "fiscal", "admin"};
+
+    /**
+     * 5. Ficha completa de cada funcionario: policia, fiscal y admin guardan también
+     *    su código, nombres, DNI, teléfono, correo... (copia de usuario).
+     *    usuario sigue teniendo a todos los usuarios completos: es la cuenta de acceso.
+     *    Dos triggers de PostgreSQL mantienen las copias iguales, para las dos aplicaciones:
+     *     - al insertar o actualizar una ficha, sus datos personales se toman de usuario;
+     *     - al cambiar los datos personales en usuario, se actualiza su ficha.
+     *    Se ejecuta en cada arranque (todo es idempotente).
+     */
+    private void completarFichas() {
+        String asignaciones = java.util.Arrays.stream(DATOS_PERSONALES).map(c -> c[0] + " = u." + c[0])
+                .collect(java.util.stream.Collectors.joining(", "));
+        String desdeUsuario = java.util.Arrays.stream(DATOS_PERSONALES)
+                .map(c -> "NEW." + c[0] + " := u." + c[0] + ";").collect(java.util.stream.Collectors.joining(" "));
+        String desdeNuevo = java.util.Arrays.stream(DATOS_PERSONALES).map(c -> c[0] + " = NEW." + c[0])
+                .collect(java.util.stream.Collectors.joining(", "));
+        String columnas = java.util.Arrays.stream(DATOS_PERSONALES).map(c -> c[0])
+                .collect(java.util.stream.Collectors.joining(", "));
+
+        for (String ficha : FICHAS) {
+            for (String[] c : DATOS_PERSONALES) {
+                agregarColumna(ficha, c[0], c[1] + " NULL");
+            }
+        }
+
+        // Ficha: sus datos personales siempre vienen de usuario
+        jdbc.execute("CREATE OR REPLACE FUNCTION fn_ficha_desde_usuario() RETURNS trigger LANGUAGE plpgsql AS $$ "
+                + "DECLARE u usuario%ROWTYPE; BEGIN "
+                + "SELECT * INTO u FROM usuario WHERE id_usuario = NEW.id_usuario; "
+                + "IF FOUND THEN " + desdeUsuario + " END IF; RETURN NEW; END $$");
+        // Usuario: al cambiar sus datos personales se actualiza su ficha (sea cual sea su rol)
+        jdbc.execute("CREATE OR REPLACE FUNCTION fn_usuario_a_ficha() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN "
+                + "UPDATE policia SET " + desdeNuevo + " WHERE id_usuario = NEW.id_usuario; "
+                + "UPDATE fiscal SET " + desdeNuevo + " WHERE id_usuario = NEW.id_usuario; "
+                + "UPDATE admin SET " + desdeNuevo + " WHERE id_usuario = NEW.id_usuario; "
+                + "RETURN NULL; END $$");
+        for (String ficha : FICHAS) {
+            jdbc.execute("DROP TRIGGER IF EXISTS tr_" + ficha + "_datos_usuario ON " + ficha);
+            jdbc.execute("CREATE TRIGGER tr_" + ficha + "_datos_usuario BEFORE INSERT OR UPDATE ON " + ficha
+                    + " FOR EACH ROW EXECUTE FUNCTION fn_ficha_desde_usuario()");
+        }
+        jdbc.execute("DROP TRIGGER IF EXISTS tr_usuario_datos_ficha ON usuario");
+        // Solo cuando cambian datos personales (no al registrar el último acceso, la foto, etc.)
+        jdbc.execute("CREATE TRIGGER tr_usuario_datos_ficha AFTER UPDATE OF " + columnas + " ON usuario "
+                + "FOR EACH ROW EXECUTE FUNCTION fn_usuario_a_ficha()");
+
+        // Rellena o corrige las fichas que no coincidan con usuario
+        int corregidas = 0;
+        for (String ficha : FICHAS) {
+            String distinto = java.util.Arrays.stream(DATOS_PERSONALES)
+                    .map(c -> "f." + c[0] + " IS DISTINCT FROM u." + c[0])
+                    .collect(java.util.stream.Collectors.joining(" OR "));
+            corregidas += jdbc.update("UPDATE " + ficha + " f SET " + asignaciones + " FROM usuario u "
+                    + "WHERE u.id_usuario = f.id_usuario AND (" + distinto + ")");
+        }
+        if (corregidas > 0) {
+            log.info("Migración: {} ficha(s) de policia, fiscal y admin completadas con los datos de usuario.", corregidas);
+        }
     }
 
     /** 2. usuario -> policia / fiscal / admin */

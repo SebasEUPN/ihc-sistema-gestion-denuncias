@@ -37,27 +37,56 @@ CREATE TABLE IF NOT EXISTS usuario (
     CONSTRAINT CK_usuario_rol CHECK (rol IN ('ADMIN', 'POLICIA', 'FISCAL'))
 );
 
--- 1.1 POLICIA: datos propios del funcionario policial (1 a 1 con USUARIO)
+-- 1.1 POLICIA: ficha del funcionario policial (1 a 1 con USUARIO).
+--     Código, nombres, DNI, teléfono, correo... son copia de USUARIO (la base los
+--     mantiene iguales con triggers); rango y dependencia son propios del policía.
 CREATE TABLE IF NOT EXISTS policia (
     id_usuario  BIGINT       NOT NULL,
+    codigo              VARCHAR(20)  NULL,  -- copia de usuario (la mantiene la base con triggers)
+    nombres             VARCHAR(80)  NULL,
+    apellidos           VARCHAR(80)  NULL,
+    dni                 VARCHAR(8)   NULL,
+    fecha_nacimiento    DATE         NULL,
+    telefono            VARCHAR(15)  NULL,
+    correo              VARCHAR(120) NULL,
+    direccion           VARCHAR(150) NULL,
+    contacto_emergencia VARCHAR(15)  NULL,
     rango       VARCHAR(60)  NULL,
     dependencia VARCHAR(120) NOT NULL,
     CONSTRAINT PK_policia PRIMARY KEY (id_usuario),
     CONSTRAINT FK_policia_usuario FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario)
 );
 
--- 1.2 FISCAL: datos propios del funcionario fiscal (1 a 1 con USUARIO)
+-- 1.2 FISCAL: ficha del funcionario fiscal (1 a 1 con USUARIO); datos personales copiados de USUARIO
 CREATE TABLE IF NOT EXISTS fiscal (
     id_usuario BIGINT       NOT NULL,
+    codigo              VARCHAR(20)  NULL,  -- copia de usuario (la mantiene la base con triggers)
+    nombres             VARCHAR(80)  NULL,
+    apellidos           VARCHAR(80)  NULL,
+    dni                 VARCHAR(8)   NULL,
+    fecha_nacimiento    DATE         NULL,
+    telefono            VARCHAR(15)  NULL,
+    correo              VARCHAR(120) NULL,
+    direccion           VARCHAR(150) NULL,
+    contacto_emergencia VARCHAR(15)  NULL,
     cargo      VARCHAR(60)  NULL,
     despacho   VARCHAR(120) NOT NULL,
     CONSTRAINT PK_fiscal PRIMARY KEY (id_usuario),
     CONSTRAINT FK_fiscal_usuario FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario)
 );
 
--- 1.3 ADMIN: datos propios del administrador del sistema (1 a 1 con USUARIO)
+-- 1.3 ADMIN: ficha del administrador (1 a 1 con USUARIO); datos personales copiados de USUARIO
 CREATE TABLE IF NOT EXISTS admin (
     id_usuario BIGINT       NOT NULL,
+    codigo              VARCHAR(20)  NULL,  -- copia de usuario (la mantiene la base con triggers)
+    nombres             VARCHAR(80)  NULL,
+    apellidos           VARCHAR(80)  NULL,
+    dni                 VARCHAR(8)   NULL,
+    fecha_nacimiento    DATE         NULL,
+    telefono            VARCHAR(15)  NULL,
+    correo              VARCHAR(120) NULL,
+    direccion           VARCHAR(150) NULL,
+    contacto_emergencia VARCHAR(15)  NULL,
     cargo      VARCHAR(60)  NULL,
     oficina    VARCHAR(120) NOT NULL,
     CONSTRAINT PK_admin PRIMARY KEY (id_usuario),
