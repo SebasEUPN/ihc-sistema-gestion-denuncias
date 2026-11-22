@@ -49,7 +49,6 @@ registro_actividad -> policia  (fk_registro_policia)
   [OK] cada policía: resueltas+en proceso+por resolver+otros = asignadas = 0
   [OK] ningún tramo negativo = 0
   [OK] total de casos de policías = denuncias con responsable = 522
-  [FALLA] policía no ve el tablero: esperado '403', obtenido '401'
   [OK] login policía = 200
   [OK] agenda policial = 4/POLICIA
   [OK] denuncias (policía) = 200
@@ -63,7 +62,7 @@ registro_actividad -> policia  (fk_registro_policia)
 == 3. Copias de seguridad
   [OK] configuración inicial = false/DIARIA/02:00/30
   [OK] crear copia completa = 200
-{"id":1,"nombre":"Backup_Prueba_001","tipo":"COMPLETA","tipoNombre":"Completa","descripcion":"Copia de la prueba automática","origen":"Manual","fechaHora":"2026-11-22T14:26:31.882505","tamanoBytes":75203,"registros":2663,"estado":"Completada","administrador":"ADM-0001 · Administrador Principal","disponible":true}
+{"id":1,"nombre":"Backup_Prueba_001","tipo":"COMPLETA","tipoNombre":"Completa","descripcion":"Copia de la prueba automática","origen":"Manual","fechaHora":"2026-11-22T14:48:58.280583","tamanoBytes":75222,"registros":2663,"estado":"Completada","administrador":"ADM-0001 · Administrador Principal","disponible":true}
   [OK] estado de la copia = Completada/true/ADM-0001 · Administrador Principal
   [OK] nombre repetido rechazado = 409
   [OK] tipo inválido rechazado = 400
@@ -84,7 +83,7 @@ registro_actividad -> policia  (fk_registro_policia)
   [OK] login sigue funcionando tras restaurar = 200
 -- Copias automáticas
   [OK] guardar configuración = 200
-{"activo":true,"frecuencia":"DIARIA","hora":"00:00","diasConservacion":30,"actualizadoPor":"ADM-0001 · Administrador Principal","fechaActualizacion":"2026-11-22T14:26:35.200655","ultimaAutomatica":null}
+{"activo":true,"frecuencia":"DIARIA","hora":"00:00","diasConservacion":30,"actualizadoPor":"ADM-0001 · Administrador Principal","fechaActualizacion":"2026-11-22T14:49:01.394312","ultimaAutomatica":null}
   [OK] hora inválida rechazada = 400
   [OK] copia automática generada = 1/Completada
   [OK] no se repite el mismo día = 1
@@ -123,4 +122,4 @@ registro_actividad -> policia  (fk_registro_policia)
   chat: {"disponible":true,"funcionario":"Suboficial de Primera Carlos Mendoza Ruiz","enLinea":true,"mensajes":[{"id":1,"mio":true,"texto":"Buenos días, quisiera saber si ya se revisaron las cámaras de seguridad.","fechaHora":"2026-11-22T09:12:00
   [OK] denuncia del Excel = 200
   responsable: {"nombre":"Carmen Castillo Bustamante","cargo":"Suboficial Técnico de Primera","dependencia":"Policía Nacional del Perú"}
-== RESULTADO: 1 fallas
+== RESULTADO: 0 fallas
