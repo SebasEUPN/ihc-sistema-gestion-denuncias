@@ -78,7 +78,7 @@ registro_actividad -> policia  (fk_registro_policia)
 == 3. Copias de seguridad
   [OK] configuración inicial = false/DIARIA/02:00/30
   [OK] crear copia completa = 200
-{"id":1,"nombre":"Backup_Prueba_001","tipo":"COMPLETA","tipoNombre":"Completa","descripcion":"Copia de la prueba automática","origen":"Manual","fechaHora":"2026-11-22T23:16:58.749878","tamanoBytes":76941,"registros":2663,"estado":"Completada","administrador":"ADM-0001 · Administrador Principal","disponible":true}
+{"id":1,"nombre":"Backup_Prueba_001","tipo":"COMPLETA","tipoNombre":"Completa","descripcion":"Copia de la prueba automática","origen":"Manual","fechaHora":"2026-11-22T23:22:36.239286","tamanoBytes":76949,"registros":2663,"estado":"Completada","administrador":"ADM-0001 · Administrador Principal","disponible":true}
   [OK] estado de la copia = Completada/true/ADM-0001 · Administrador Principal
   [OK] nombre repetido rechazado = 409
   [OK] tipo inválido rechazado = 400
@@ -100,7 +100,7 @@ registro_actividad -> policia  (fk_registro_policia)
   [OK] login sigue funcionando tras restaurar = 200
 -- Copias automáticas
   [OK] guardar configuración = 200
-{"activo":true,"frecuencia":"DIARIA","hora":"00:00","diasConservacion":30,"actualizadoPor":"ADM-0001 · Administrador Principal","fechaActualizacion":"2026-11-22T23:17:00.906587","ultimaAutomatica":null}
+{"activo":true,"frecuencia":"DIARIA","hora":"00:00","diasConservacion":30,"actualizadoPor":"ADM-0001 · Administrador Principal","fechaActualizacion":"2026-11-22T23:22:39.426226","ultimaAutomatica":null}
   [OK] hora inválida rechazada = 400
   [OK] copia automática generada = 1/Completada
   [OK] no se repite el mismo día = 1

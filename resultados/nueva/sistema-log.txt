@@ -1,23 +1,23 @@
  :: Spring Boot ::                (v3.5.7)
 
-2026-11-22T23:16:32.236-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : Starting SistemaDenunciasApplication v1.0.0 using Java 17.0.21 with PID 3048 (/home/runner/work/ihc-sistema-gestion-denuncias/ihc-sistema-gestion-denuncias/target/sistema-denuncias-1.0.0.jar started by runner in /home/runner/work/ihc-sistema-gestion-denuncias/ihc-sistema-gestion-denuncias)
-2026-11-22T23:16:32.238-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : No active profile set, falling back to 1 default profile: "default"
-2026-11-22T23:16:32.746-05:00  INFO 3048 --- [sistema-denuncias] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-11-22T23:16:32.805-05:00  INFO 3048 --- [sistema-denuncias] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 52 ms. Found 14 JPA repository interfaces.
-2026-11-22T23:16:33.292-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-11-22T23:16:33.314-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-11-22T23:16:33.314-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
-2026-11-22T23:16:33.331-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-11-22T23:16:33.331-05:00  INFO 3048 --- [sistema-denuncias] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1065 ms
-2026-11-22T23:16:33.423-05:00  WARN 3048 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariConfig           : HikariPool-1 - idleTimeout is close to or more than maxLifetime, disabling it.
-2026-11-22T23:16:33.425-05:00  INFO 3048 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-11-22T23:16:33.818-05:00  INFO 3048 --- [sistema-denuncias] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3a1f2a1
-2026-11-22T23:16:33.819-05:00  INFO 3048 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-11-22T23:16:33.926-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-11-22T23:16:33.963-05:00  INFO 3048 --- [sistema-denuncias] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.33.Final
-2026-11-22T23:16:33.985-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-11-22T23:16:34.203-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-11-22T23:16:34.273-05:00  INFO 3048 --- [sistema-denuncias] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-11-22T23:21:59.863-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : Starting SistemaDenunciasApplication v1.0.0 using Java 17.0.21 with PID 2914 (/home/runner/work/ihc-sistema-gestion-denuncias/ihc-sistema-gestion-denuncias/target/sistema-denuncias-1.0.0.jar started by runner in /home/runner/work/ihc-sistema-gestion-denuncias/ihc-sistema-gestion-denuncias)
+2026-11-22T23:21:59.866-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : No active profile set, falling back to 1 default profile: "default"
+2026-11-22T23:22:00.616-05:00  INFO 2914 --- [sistema-denuncias] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-22T23:22:00.686-05:00  INFO 2914 --- [sistema-denuncias] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 61 ms. Found 14 JPA repository interfaces.
+2026-11-22T23:22:01.346-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-11-22T23:22:01.375-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-22T23:22:01.375-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-11-22T23:22:01.399-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-11-22T23:22:01.400-05:00  INFO 2914 --- [sistema-denuncias] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1489 ms
+2026-11-22T23:22:01.515-05:00  WARN 2914 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariConfig           : HikariPool-1 - idleTimeout is close to or more than maxLifetime, disabling it.
+2026-11-22T23:22:01.517-05:00  INFO 2914 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-22T23:22:01.945-05:00  INFO 2914 --- [sistema-denuncias] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7f73ce28
+2026-11-22T23:22:01.946-05:00  INFO 2914 --- [sistema-denuncias] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-22T23:22:02.099-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-11-22T23:22:02.150-05:00  INFO 2914 --- [sistema-denuncias] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.33.Final
+2026-11-22T23:22:02.189-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-11-22T23:22:02.479-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-22T23:22:02.568-05:00  INFO 2914 --- [sistema-denuncias] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 18.7
@@ -25,16 +25,16 @@
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-11-22T23:16:34.919-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-11-22T23:16:34.921-05:00  INFO 3048 --- [sistema-denuncias] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-11-22T23:16:35.144-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-11-22T23:16:35.916-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
-2026-11-22T23:16:36.143-05:00  INFO 3048 --- [sistema-denuncias] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-11-22T23:16:36.156-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : Started SistemaDenunciasApplication in 4.295 seconds (process running for 4.613)
-2026-11-22T23:16:36.568-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.denuncias.config.ImportacionExcel    : Importando las 500 denuncias del Excel...
-2026-11-22T23:16:36.644-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.denuncias.config.ImportacionExcel    : Importación terminada: 520 denuncias en total.
-2026-11-22T23:16:36.733-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.d.config.UsuariosAdicionales         : Usuarios de demostración adicionales creados: 27
-2026-11-22T23:16:36.753-05:00  INFO 3048 --- [sistema-denuncias] [           main] c.p.d.config.ActividadDemostracion       : Actividad de demostración registrada en 330 de 435 denuncias activas.
-2026-11-22T23:16:53.915-05:00  INFO 3048 --- [sistema-denuncias] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-11-22T23:16:53.915-05:00  INFO 3048 --- [sistema-denuncias] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-11-22T23:16:53.917-05:00  INFO 3048 --- [sistema-denuncias] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-11-22T23:22:03.545-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-22T23:22:03.548-05:00  INFO 2914 --- [sistema-denuncias] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-22T23:22:03.882-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-22T23:22:04.840-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-11-22T23:22:05.216-05:00  INFO 2914 --- [sistema-denuncias] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-11-22T23:22:05.228-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.d.SistemaDenunciasApplication        : Started SistemaDenunciasApplication in 5.915 seconds (process running for 6.352)
+2026-11-22T23:22:05.680-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.denuncias.config.ImportacionExcel    : Importando las 500 denuncias del Excel...
+2026-11-22T23:22:05.768-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.denuncias.config.ImportacionExcel    : Importación terminada: 520 denuncias en total.
+2026-11-22T23:22:05.882-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.d.config.UsuariosAdicionales         : Usuarios de demostración adicionales creados: 27
+2026-11-22T23:22:05.912-05:00  INFO 2914 --- [sistema-denuncias] [           main] c.p.d.config.ActividadDemostracion       : Actividad de demostración registrada en 330 de 435 denuncias activas.
+2026-11-22T23:22:27.343-05:00  INFO 2914 --- [sistema-denuncias] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-22T23:22:27.343-05:00  INFO 2914 --- [sistema-denuncias] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-11-22T23:22:27.344-05:00  INFO 2914 --- [sistema-denuncias] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
