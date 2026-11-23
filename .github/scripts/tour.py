@@ -61,7 +61,8 @@ async def main():
             ok(f"{codigo}: Finalizar cierra el tutorial", not await page.locator(".tour-tarjeta").count())
             ok(f"{codigo}: queda marcado como visto", await page.evaluate(f"localStorage.getItem('sgd-tutorial-visto-{codigo}')") == "1")
             # Vuelve a entrar: ya no se abre solo
-            await page.click("#logoutBtn"); await page.wait_for_timeout(1500)
+            await page.click("#logoutBtn"); await page.wait_for_timeout(400)
+            await page.click("#confirmLogout"); await page.wait_for_timeout(1500)
             await login(page, rol, codigo); await page.wait_for_timeout(1200)
             ok(f"{codigo}: no se abre solo en el segundo ingreso", not await page.locator(".tour-tarjeta").count())
             if rol == "admin":
