@@ -6,7 +6,8 @@
   <meta name="description" content="Sistema de Gestión y Seguimiento de Denuncias PNP y Fiscalía">
   <title>Prototipo IHC (fines didácticos) · Sistema de gestión de denuncias</title>
   <!-- Hoja de estilos (src/main/resources/static/css/styles.css) -->
-  <link rel="stylesheet" href="css/styles.css?v=10">
+  <link rel="stylesheet" href="css/styles.css?v=11">
+  <link rel="stylesheet" href="css/tour.css?v=11">
 </head>
 <body>
 <div role="note" style="background:#FFF4CC;color:#5c4400;border-bottom:1px solid #e0c96b;font:600 13px/1.4 system-ui,Segoe UI,Arial,sans-serif;text-align:center;padding:6px 12px">Prototipo académico IHC con fines didácticos (sistema de gestión de denuncias). No es un sitio oficial de la PNP ni del Ministerio Público; los datos son ficticios.</div>
@@ -108,6 +109,8 @@
     <main class="workspace">
       <!-- Barra de accesibilidad: aparece en los tres perfiles (mismo estilo que el portal ciudadano) -->
       <div class="access-bar" aria-label="Opciones de accesibilidad">
+        <!-- Tutorial guiado: pregunta si se quiere repetir el recorrido (js/tutorial.js) -->
+        <button class="access-btn" id="tutorialBtn" type="button" title="Ver el tutorial guiado de la pantalla"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg><b>Tutorial</b></button>
         <button class="access-btn" id="colorMode" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.7-.7 1.7-1.5 0-.4-.2-.8-.4-1.2-.3-.5-.6-1-.6-1.6 0-1.1.9-2 2-2H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3Z"/><circle cx="7.5" cy="10.5" r=".7" fill="currentColor"/><circle cx="10" cy="7" r=".7" fill="currentColor"/><circle cx="14" cy="7" r=".7" fill="currentColor"/><circle cx="17" cy="10" r=".7" fill="currentColor"/></svg><b>Color</b></button>
         <button class="access-btn" id="voiceReader" type="button" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><b id="voiceReaderLabel">Escuchar</b></button>
         <button class="access-btn" id="textSmaller" type="button" aria-label="Reducir el tamaño del contenido">A−</button>
@@ -398,12 +401,14 @@
 
   <!-- Scripts (src/main/resources/static/js): el orden importa -->
   
-  <script src="js/icons.js?v=10"></script> <!-- 1. Iconos SVG -->
-  <script src="js/api.js?v=10"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
-  <script src="js/app.js?v=10"></script>   <!-- 3. Lógica de las pantallas -->
-  <script src="js/modulos.js?v=10"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
-  <script src="js/copias.js?v=10"></script>  <!-- 5. Copias de seguridad del administrador -->
-  <script src="js/inactividad.js?v=10"></script> <!-- 6. Control de denuncias sin actividad -->
-  <script src="js/avance.js?v=10"></script> <!-- 7. Avance de casos por policía y fiscal -->
+  <script src="js/icons.js?v=11"></script> <!-- 1. Iconos SVG -->
+  <script src="js/api.js?v=11"></script>   <!-- 2. Comunicación con el backend Spring Boot -->
+  <script src="js/app.js?v=11"></script>   <!-- 3. Lógica de las pantallas -->
+  <script src="js/modulos.js?v=11"></script> <!-- 4. Documentos, detalles, seguimiento fiscal y reportes -->
+  <script src="js/copias.js?v=11"></script>  <!-- 5. Copias de seguridad del administrador -->
+  <script src="js/inactividad.js?v=11"></script> <!-- 6. Control de denuncias sin actividad -->
+  <script src="js/avance.js?v=11"></script> <!-- 7. Avance de casos por policía y fiscal -->
+  <script src="js/tour.js?v=11"></script> <!-- 8. Motor del tour guiado -->
+  <script src="js/tutorial.js?v=11"></script> <!-- 9. Tutorial de cada perfil -->
 </body>
 </html>

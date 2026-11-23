@@ -21,6 +21,9 @@ async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch(channel="chrome")
         ctx = await b.new_context(viewport={"width": 1440, "height": 900}, locale="es-PE")
+        # Estas capturas no son del tutorial: se marca como ya visto para que no tape la pantalla
+        await ctx.add_init_script("for (const c of ['ADM-0001','PNP-2045','FN-1023']) localStorage.setItem('sgd-tutorial-visto-'+c,'1');"
+                                  "for (const v of ['home','verify','cases','result']) localStorage.setItem('pnp-tutorial-visto-'+v,'1');")
         page = await ctx.new_page()
         errores = []
         page.on("pageerror", lambda e: errores.append(str(e)))

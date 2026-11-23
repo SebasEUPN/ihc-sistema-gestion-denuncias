@@ -191,6 +191,8 @@ function openApp() {
   $("#mainNav").innerHTML = p.nav.filter(([page]) => tienePermiso(page)).map(([page, icon, label], i) => `<button class="nav-item ${i === 0 ? "active" : ""}" data-page="${page}"><span class="nav-icon">${SIDEBAR_ICONS[icon] || icon}</span>${label}${page === "chat" ? `<span class="nav-badge" id="chatBadge">${totalUnread()}</span>` : ""}</button>`).join("");
   $("#denunciasTitle").textContent = state.role === "fiscal" ? "Carpetas fiscales asignadas" : "Denuncias asignadas";
   updateDateTime(); renderDashboard(); renderCases(); renderUsers(); renderDuties(); renderChat(); goPage("dashboard");
+  // La primera vez que el funcionario entra se abre el tutorial guiado (js/tutorial.js)
+  if (typeof tutorialAlIngresar === "function") tutorialAlIngresar();
 }
 
 // Navegación: cualquier elemento con data-page cambia de página

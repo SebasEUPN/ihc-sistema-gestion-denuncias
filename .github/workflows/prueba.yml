@@ -85,6 +85,7 @@ jobs:
         run: |
           pip install -q playwright
           python .github/scripts/capturas.py resultados/$ESCENARIO/capturas 2>&1 | tail -20
+          python .github/scripts/tour.py resultados/$ESCENARIO/tour 2>&1 | tail -60
       - name: Registros
         if: always()
         run: |

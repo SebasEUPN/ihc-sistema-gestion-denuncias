@@ -1,0 +1,41 @@
+/* Tour guiado de la interfaz (igual en el portal ciudadano y en el sistema de gestión) */
+:root{--tour-sombra:rgba(9,17,30,.58);--tour-anillo:#f5b301;--tour-fondo:#fff;--tour-texto:#1d2939;--tour-suave:#667085;--tour-pri:#0b3a6e;--tour-pri-texto:#fff;--tour-borde:#d0d5dd}
+.tour-capa{position:fixed;inset:0;z-index:9998;background:transparent;cursor:default}
+.tour-foco{position:fixed;z-index:9999;border-radius:10px;pointer-events:none;box-shadow:0 0 0 4px var(--tour-anillo),0 0 0 9999px var(--tour-sombra);transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease}
+.tour-foco::after{content:"";position:absolute;inset:-4px;border-radius:12px;border:4px solid var(--tour-anillo);animation:tourPulso 1.6s ease-out infinite}
+.tour-foco.centro{top:50%;left:50%;width:0;height:0;box-shadow:0 0 0 9999px var(--tour-sombra)}
+.tour-foco.centro::after{display:none}
+@keyframes tourPulso{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.06)}}
+.tour-tarjeta{position:fixed;z-index:10000;width:min(380px,calc(100vw - 24px));background:var(--tour-fondo);color:var(--tour-texto);border:1px solid var(--tour-borde);border-radius:14px;padding:16px 18px 14px;box-shadow:0 18px 50px rgba(0,0,0,.28);font-family:inherit;font-size:15px;line-height:1.45;opacity:0;transform:translateY(6px);transition:opacity .18s ease,transform .18s ease,top .25s ease,left .25s ease}
+.tour-tarjeta.visible{opacity:1;transform:none}
+.tour-tarjeta.centro{top:50%;left:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 24px))}
+.tour-cabecera{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.tour-paso{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tour-suave)}
+.tour-cerrar{border:0;background:transparent;color:var(--tour-suave);font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px}
+.tour-cerrar:hover{background:rgba(0,0,0,.06)}
+.tour-titulo{margin:0 0 6px;font-size:18px;line-height:1.25;color:var(--tour-texto)}
+.tour-texto{margin:0;color:var(--tour-texto)}
+.tour-texto b{font-weight:700}
+.tour-progreso{height:4px;border-radius:4px;background:rgba(0,0,0,.08);margin:14px 0 12px;overflow:hidden}
+.tour-progreso i{display:block;height:100%;background:var(--tour-pri);border-radius:4px;transition:width .25s ease}
+.tour-acciones{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tour-espacio{flex:1}
+.tour-btn{font:inherit;font-size:14px;font-weight:600;border-radius:9px;padding:8px 13px;cursor:pointer;border:1px solid var(--tour-borde);background:transparent;color:var(--tour-texto)}
+.tour-btn:disabled{opacity:.4;cursor:not-allowed}
+.tour-btn:focus-visible,.tour-cerrar:focus-visible{outline:3px solid var(--tour-anillo);outline-offset:2px}
+.tour-pri{background:var(--tour-pri);border-color:var(--tour-pri);color:var(--tour-pri-texto)}
+.tour-saltar{border:0;padding-left:0;color:var(--tour-suave);text-decoration:underline;font-weight:500}
+.tour-confirmar{position:fixed;inset:0;z-index:10001;background:var(--tour-sombra)}
+.tour-confirmar .tour-tarjeta{opacity:1}
+.tour-confirmar .tour-titulo{margin-bottom:8px}
+.tour-confirmar .tour-acciones{margin-top:16px}
+body.tour-activo{overscroll-behavior:none}
+@media (max-width:560px){.tour-tarjeta{font-size:14px;padding:14px}.tour-saltar{order:3;width:100%;text-align:left}}
+@media (prefers-reduced-motion:reduce){.tour-foco,.tour-tarjeta{transition:none}.tour-foco::after{animation:none}}
+/* Modos de color */
+body[data-color-mode="dark"]{--tour-fondo:#161d27;--tour-texto:#f2f4f7;--tour-suave:#aab4c3;--tour-borde:#344054;--tour-pri:#4f95d6;--tour-pri-texto:#06121f;--tour-sombra:rgba(0,0,0,.66)}
+body[data-color-mode="dark"] .tour-progreso{background:rgba(255,255,255,.12)}
+body[data-color-mode="contrast"]{--tour-anillo:#ffde00;--tour-fondo:#000;--tour-texto:#fff;--tour-suave:#fff;--tour-borde:#fff;--tour-pri:#ffde00;--tour-pri-texto:#000;--tour-sombra:rgba(0,0,0,.72)}
+body:is([data-color-mode="colorblind"],[data-color-mode="protanopia"],[data-color-mode="deuteranopia"]){--tour-anillo:#e69f00;--tour-pri:#0072b2}
+body[data-color-mode="tritanopia"]{--tour-anillo:#d9536b;--tour-pri:#00666f}
+body[data-color-mode="mono"]{--tour-anillo:#000;--tour-pri:#111}
