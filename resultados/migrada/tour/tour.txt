@@ -10,8 +10,8 @@
   [OK] ADM-0001: no se abre solo en el segundo ingreso
   [OK] botón Tutorial pregunta si se quiere repetir
   [OK] responder No cancela
-  [FALLA] responder Sí repite el tutorial (desde el inicio) = PASO 1 DE 22 · ¡Hola, Administrador! Bienvenido al Sistema de gestión de denuncias
-  [FALLA] flecha derecha avanza = PASO 2 DE 22 · Tu perfil
+  [OK] responder Sí repite el tutorial (desde el inicio) = PASO 1 DE 22 · ¡Hola, Administrador! Bienvenido al Sistema de gestión de denuncias
+  [OK] flecha derecha avanza = PASO 2 DE 22 · Tu perfil
   [OK] Esc sale del tutorial
   [OK] tras salir, la página responde a los clics
   [OK] PNP-2045: el tutorial se abre solo al primer ingreso = PASO 1 DE 21 · ¡Hola, Carlos! Bienvenido al Sistema de gestión de denuncias
@@ -35,8 +35,15 @@
   [OK] portal: no se repite al volver a entrar
   [OK] portal: recorrido de la verificación con PIN = PASO 1 DE 4 · Verificación de identidad
   verificación: 4 pasos
-  [FALLA] portal: recorrido del historial de denuncias = PASO 1 DE 9 · Volver al historial
-  historial: 9 pasos
   vista tras el PIN: result
-  [FALLA] la prueba se interrumpió: Page.click: Timeout 8000ms exceeded.
-== RESULTADO TOUR: 4 fallas
+  [OK] portal: recorrido del detalle de la denuncia = PASO 1 DE 9 · Volver al historial
+  detalle: 9 pasos -> Volver al historial | Tu denuncia y su estado | Datos del caso | ¿Qué significa? | Evidencias y avances | Responsable asignado | Comunícate con el responsable | Constancia | Salir
+  [OK] portal: recorrido del historial de denuncias = PASO 1 DE 4 · Mis denuncias registradas
+  historial: 4 pasos
+  [OK] portal: el detalle ya no repite su recorrido
+  [OK] portal: No cancela
+  [OK] portal: Sí repite el recorrido de la pantalla actual = PASO 1 DE 9 · Volver al historial
+  [OK] portal: Salir del tutorial lo cierra
+  [OK] portal en celular: el recorrido llega al final = 12
+  [OK] sin errores de JavaScript
+== RESULTADO TOUR: 0 fallas
