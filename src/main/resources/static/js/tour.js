@@ -35,10 +35,10 @@ const Tour = (() => {
       <p class="tour-texto" id="tourTexto"></p>
       <div class="tour-progreso" aria-hidden="true"><i id="tourBarra"></i></div>
       <div class="tour-acciones">
-        <button type="button" class="tour-btn tour-saltar" data-tour="salir">Salir del tutorial</button>
-        <span class="tour-espacio"></span>
         <button type="button" class="tour-btn tour-sec" data-tour="anterior">← Anterior</button>
+        <span class="tour-espacio"></span>
         <button type="button" class="tour-btn tour-pri" data-tour="siguiente">Siguiente →</button>
+        <button type="button" class="tour-btn tour-saltar" data-tour="salir">Salir del tutorial</button>
       </div>`;
     tarjeta.addEventListener("click", e => {
       e.stopPropagation();
