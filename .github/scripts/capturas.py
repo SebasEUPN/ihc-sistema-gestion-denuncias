@@ -51,6 +51,8 @@ async def main():
             await page.locator("#avancePolicias").screenshot(path=f"{OUT}/av-modo-{m}.png")
         await ctx.close()
         ctx = await b.new_context(viewport={"width": 1440, "height": 900}, locale="es-PE")
+        await ctx.add_init_script("for (const c of ['ADM-0001','PNP-2045','FN-1023']) localStorage.setItem('sgd-tutorial-visto-'+c,'1');"
+                                  "for (const v of ['home','verify','cases','result']) localStorage.setItem('pnp-tutorial-visto-'+v,'1');")
         page = await ctx.new_page()
         page.on("pageerror", lambda e: errores.append(str(e)))
         await login(page, "policia", "PNP-2045")
