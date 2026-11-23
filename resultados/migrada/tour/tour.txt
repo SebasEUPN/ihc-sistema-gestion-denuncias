@@ -1,0 +1,42 @@
+== Sistema de gestión
+  [OK] ADM-0001: el tutorial se abre solo al primer ingreso = PASO 1 DE 22 · ¡Hola, Administrador! Bienvenido al Sistema de gestión de denuncias
+  [OK] ADM-0001: la pantalla de fondo sigue visible
+  [OK] ADM-0001: Anterior deshabilitado en el primer paso
+  [OK] retroceder vuelve al paso anterior = PASO 2 DE 22 · Tu perfil -> PASO 1 DE 22 · ¡Hola, Administrador! Bienvenido al Sistema de gestión de denuncias
+  [OK] el primer paso va centrado (sin resaltado)
+  ADM-0001: 22 pasos -> ¡Hola, Administrador! Bienvenido al Sistema de gestión de denuncias | Tu perfil | Menú principal | Funcionarios | Registrar funcionario | Usuarios y perfiles | Reportes | Registros de actividades | Copias de seguridad | Chat de soporte | Dónde estás | Resumen general | Accesos rápidos | Deberes pendientes | Tu cuenta | Modos de color | Escuchar | Tamaño del texto | Ayuda y glosario | Repetir el tutorial | Cerrar sesión | ¡Listo!
+  [OK] ADM-0001: Finalizar cierra el tutorial
+  [OK] ADM-0001: queda marcado como visto
+  [OK] ADM-0001: no se abre solo en el segundo ingreso
+  [OK] botón Tutorial pregunta si se quiere repetir
+  [OK] responder No cancela
+  [FALLA] responder Sí repite el tutorial (desde el inicio) = PASO 1 DE 22 · ¡Hola, Administrador! Bienvenido al Sistema de gestión de denuncias
+  [FALLA] flecha derecha avanza = PASO 2 DE 22 · Tu perfil
+  [OK] Esc sale del tutorial
+  [OK] tras salir, la página responde a los clics
+  [OK] PNP-2045: el tutorial se abre solo al primer ingreso = PASO 1 DE 21 · ¡Hola, Carlos! Bienvenido al Sistema de gestión de denuncias
+  [OK] PNP-2045: la pantalla de fondo sigue visible
+  [OK] PNP-2045: Anterior deshabilitado en el primer paso
+  PNP-2045: 21 pasos -> ¡Hola, Carlos! Bienvenido al Sistema de gestión de denuncias | Tu perfil | Menú principal | Denuncias registradas | Actuaciones policiales | Documentos y evidencias | Informes a Fiscalía | Programación de actividades | Chat institucional | Dónde estás | Resumen general | Accesos rápidos | Deberes pendientes | Tu cuenta | Modos de color | Escuchar | Tamaño del texto | Ayuda y glosario | Repetir el tutorial | Cerrar sesión | ¡Listo!
+  [OK] PNP-2045: Finalizar cierra el tutorial
+  [OK] PNP-2045: queda marcado como visto
+  [OK] PNP-2045: no se abre solo en el segundo ingreso
+  [OK] FN-1023: el tutorial se abre solo al primer ingreso = PASO 1 DE 20 · ¡Hola, María! Bienvenido al Sistema de gestión de denuncias
+  [OK] FN-1023: la pantalla de fondo sigue visible
+  [OK] FN-1023: Anterior deshabilitado en el primer paso
+  FN-1023: 20 pasos -> ¡Hola, María! Bienvenido al Sistema de gestión de denuncias | Tu perfil | Menú principal | Carpetas fiscales | Diligencias | Disposiciones fiscales | Reportes | Chat con funcionario policial | Dónde estás | Resumen general | Accesos rápidos | Deberes pendientes | Tu cuenta | Modos de color | Escuchar | Tamaño del texto | Ayuda y glosario | Repetir el tutorial | Cerrar sesión | ¡Listo!
+  [OK] FN-1023: Finalizar cierra el tutorial
+  [OK] FN-1023: queda marcado como visto
+  [OK] FN-1023: no se abre solo en el segundo ingreso
+  [OK] sistema en celular: el recorrido llega al final = 20
+== Portal ciudadano
+  [OK] portal: el tutorial se abre solo en la primera visita = PASO 1 DE 12 · ¡Bienvenido al portal de seguimiento de denuncias!
+  inicio: 12 pasos -> ¡Bienvenido al portal de seguimiento de denuncias! | Secciones del portal | 1. Escribe tu código | Consulta protegida | ¿Cómo funciona? | Ver un ejemplo | Modos de color | Escuchar | Tamaño del texto | Ayuda | Repetir el tutorial | ¡Listo para consultar!
+  [OK] portal: no se repite al volver a entrar
+  [OK] portal: recorrido de la verificación con PIN = PASO 1 DE 4 · Verificación de identidad
+  verificación: 4 pasos
+  [FALLA] portal: recorrido del historial de denuncias = PASO 1 DE 9 · Volver al historial
+  historial: 9 pasos
+  vista tras el PIN: result
+  [FALLA] la prueba se interrumpió: Page.click: Timeout 8000ms exceeded.
+== RESULTADO TOUR: 4 fallas
