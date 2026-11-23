@@ -118,7 +118,9 @@ async def main():
         ok("portal: recorrido del historial de denuncias", (await tarjeta(page) or "").endswith("Mis denuncias registradas"), await tarjeta(page))
         titulos = await recorrer(page, "por-historial", (2,))
         lineas.append(f"  historial: {len(titulos)} pasos")
-        await page.click(".case-option >> nth=0"); await page.wait_for_timeout(2500)
+        await foto(page, "por-tras-pin")
+        lineas.append("  vista tras el PIN: " + await page.evaluate("document.querySelector('main .view:not(.hidden)')?.id"))
+        await page.click(".case-option >> nth=0", timeout=8000); await page.wait_for_timeout(2500)
         ok("portal: recorrido del detalle de la denuncia", (await tarjeta(page) or "") != "", await tarjeta(page))
         titulos = await recorrer(page, "por-detalle", (2, 3, 5, 7))
         lineas.append(f"  detalle: {len(titulos)} pasos -> " + " | ".join(x.split(' · ')[1] for x in titulos))
@@ -147,7 +149,10 @@ async def main():
         ok("sin errores de JavaScript", not errores, "; ".join(errores[:3]))
         await b.close()
 
-asyncio.run(main())
+try:
+    asyncio.run(main())
+except Exception as e:
+    lineas.append(f"  [FALLA] la prueba se interrumpió: {str(e).splitlines()[0]}"); fallas[0] += 1
 lineas.append(f"== RESULTADO TOUR: {fallas[0]} fallas")
 open(f"{OUT}/tour.txt", "w").write("\n".join(lineas) + "\n")
 print("\n".join(lineas))
